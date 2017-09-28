@@ -7,7 +7,7 @@
  * @see /app/model/Database.model.php
  * @see /app/common.php
  */
-abstract class HelperList
+abstract class ModelHelper
 {
     // 한 페이지 게시물 수
     const ROWS = 20;
@@ -75,6 +75,19 @@ abstract class HelperList
         $total = ceil($this->getTotalCount() / $rows);
 
         return $total;
+    }
+
+    protected static function _getVars($filters)
+    {
+        $args = $vars = [];
+
+        foreach($filters as $key => $value) {
+            $args[$key] = isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+        }
+
+        $vars = filter_var_array($args, $filters);
+
+        return $vars;
     }
 
     public function getQueryString()

@@ -34,11 +34,16 @@ if (DEV) {
 /**
  * 디렉터리 설정 및 쿠키 도메인 설정
  */
+if (!file_exists(__DIR__.'/app.php')) {
+    echo 'Change the app.conf file name to app.php.';
+    exit;
+}
 require __DIR__.'/app.php';
 
 define('PATH', __DIR__);
 define('CTLR', PATH.'/'.CTLR_DIR);
 define('MODEL', PATH.'/'.MODEL_DIR);
+define('HELPER', PATH.'/'.HELPER_DIR);
 define('VIEW', PATH.'/'.VIEW_DIR);
 
 define('ROOT', $_SERVER['DOCUMENT_ROOT']);
@@ -86,6 +91,12 @@ $uris = array_pad($uris, 5, null);
  * 모델 Auto Loader
  */
 function modelLoader($class) {
-    require MODEL.'/'.$class.'.model.php';
+    if (strpos($class, 'Helper') !== false) {
+        require HELPER.'/'.$class.'.php';
+    } else if (strpos($class, 'Model') !== false) {
+        require MODEL.'/'.$class.'.php';
+    } else {
+        require CTLR.'/'.strtolower($class).'/'.$class.'.php';
+    }
 }
 spl_autoload_register('modelLoader');

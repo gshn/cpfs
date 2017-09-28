@@ -19,7 +19,7 @@ require PATH.'/lib.php';
  * object PDO
  */
 if (!empty($cf['db_name']) && !empty($cf['db_user']) && !empty($cf['db_pass']) && !empty($cf['db_host'])) {
-    $pdo = new Database($cf['db_name'], $cf['db_user'], $cf['db_pass'], $cf['db_host']);
+    $pdo = new DatabaseHelper($cf['db_name'], $cf['db_user'], $cf['db_pass'], $cf['db_host']);
 
     /**
      * 세션 관련 설정
@@ -56,6 +56,7 @@ if (!empty($member['id'])) {
 } else {
     $is_guest = true;
 }
+vardump($mb->getVars());
 
 // 웹뷰, 모바일, 윈도우즈 체크
 $cz['is_webview'] = is_webview();

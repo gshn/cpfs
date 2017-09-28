@@ -1,5 +1,5 @@
 <?php
-class Database
+class DatabaseHelper
 {
     static $pdo;
     static $name;
