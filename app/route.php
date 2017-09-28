@@ -1,12 +1,16 @@
 <?php
 Route::get('/', function() {
-    Route::template(VIEW.'/template/main.php');
+    Route::template('/template/main');
 });
 
 Route::get('/member/login', function() {
-    Route::template(VIEW.'/member/login.php', 'no-header');
+    Route::template('/member/login', 'no-header');
 });
 
 Route::post('/member/login', function($me) {
     $me->login();
+});
+
+Route::get('/member/logout', function($me) {
+    $me->logout();
 });

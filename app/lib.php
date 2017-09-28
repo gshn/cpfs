@@ -317,9 +317,9 @@ function js_css($urls)
         $ext = $arr[count($arr) - 1];
 
         if ($ext === 'js') {
-            $html .= '<script src="'.$url.'?'.filemtime(ROOTPATH.$url).'"></script>'.PHP_EOL;
+            $html .= '<script src="'.$url.'?'.filemtime(ROOT.$url).'"></script>'.PHP_EOL;
         } else if ($ext === 'css') {
-            $html .= '<link rel="stylesheet" href="'.$url.'?'.filemtime(ROOTPATH.$url).'">'.PHP_EOL;
+            $html .= '<link rel="stylesheet" href="'.$url.'?'.filemtime(ROOT.$url).'">'.PHP_EOL;
         }
     }
 

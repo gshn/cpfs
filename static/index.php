@@ -32,7 +32,7 @@
  * @repository https://github.com/gshn/cpfs
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://cozmogames.com
- * @since	Version 1.2.0
+ * @since	Version 1.2.1
  */
 require __DIR__.'/../app/common.php';
 

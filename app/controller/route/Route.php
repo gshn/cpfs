@@ -18,7 +18,11 @@ class Route
             }
 
             if (is_callable($method, true, $called)) {
-                $method($$className);
+                if (isset($className) && is_object($$className)) {
+                    $method($$className);
+                } else {
+                    $method();
+                }
             }
         }
     }
@@ -26,8 +30,18 @@ class Route
     public static function post($uri, $method = null)
     {
         if (self::$uri === $uri && count($_POST) > 0) {
+            $uris = explode('/', $uri);
+            if (!empty($uris[1])) {
+                $className = $uris[1];
+                $$className = new $uris[1]();
+            }
+
             if (is_callable($method, true, $called)) {
-                $method();
+                if (isset($className) && is_object($$className)) {
+                    $method($$className);
+                } else {
+                    $method();
+                }
             }
         }
     }
@@ -40,7 +54,7 @@ class Route
         } else {
             require_once VIEW.'/template/header.php';
         }
-        require_once $path;
+        require_once VIEW.$path.'.php';
         if ($head === 'no-header') {
             require_once VIEW.'/template/body-html.php';
         } else {
