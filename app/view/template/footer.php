@@ -1,4 +1,4 @@
 <footer class="footer">
 </footer>
 <?php
-require VIEWPATH.'/template/html-body.php';
+require VIEW.'/template/body-html.php';

@@ -82,7 +82,7 @@ abstract class ModelHelper
         $args = $vars = [];
 
         foreach($filters as $key => $value) {
-            $args[$key] = isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+            isset($_REQUEST[$key]) ? $args[$key] = $_REQUEST[$key] : null;
         }
 
         $vars = filter_var_array($args, $filters);

@@ -6,18 +6,24 @@ class Member extends MemberModel
         parent::__construct();
     }
 
-    public static function getVars()
+    private static function _password($password)
     {
-        $filters = [
-            'id' => FILTER_VALIDATE_INT,
-            'email' => FILTER_VALIDATE_EMAIL,
-            'hp' => FILTER_SANITIZE_STRING,
-            'name' => FILTER_SANITIZE_STRING,
-            'password' => FILTER_UNSAFE_RAW,
-            'isdelete' => FILTER_VALIDATE_BOOLEAN,
-            'auto' => FILTER_VALIDATE_BOOLEAN
-        ];
+        return crypt($password, BLOWFISH);
+    }
 
+    public static function getVars($filters = null)
+    {
+        if ($filters === null) {
+            $filters = [
+                'id' => FILTER_VALIDATE_INT,
+                'email' => FILTER_VALIDATE_EMAIL,
+                'hp' => FILTER_SANITIZE_STRING,
+                'name' => FILTER_SANITIZE_STRING,
+                'password' => FILTER_UNSAFE_RAW,
+                'isdelete' => FILTER_VALIDATE_BOOLEAN,
+                'auto' => FILTER_VALIDATE_BOOLEAN
+            ];
+        }
         $vars = self::_getVars($filters);
 
         return $vars;
@@ -56,8 +62,14 @@ class Member extends MemberModel
         return [];
     }
 
-    public function login($email, $password, $auto = null)
+    public function login()
     {
+        extract(self::getVars($filters = [
+            'email' => FILTER_VALIDATE_EMAIL,
+            'password' => FILTER_UNSAFE_RAW,
+            'auto' => FILTER_VALIDATE_BOOLEAN
+        ]));
+
         $member = self::getRow('email', $email);
 
         if (empty($member['id']) || ($member['password'] !== self::_password($password))) {

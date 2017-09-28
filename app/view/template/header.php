@@ -1,5 +1,5 @@
 <?php
-require VIEWPATH.'/template/html-head.php';
+require VIEW.'/template/html-head.php';
 ?>
 <header class="header">
     <nav class="tnb">

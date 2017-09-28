@@ -56,7 +56,6 @@ if (!empty($member['id'])) {
 } else {
     $is_guest = true;
 }
-vardump($mb->getVars());
 
 // 웹뷰, 모바일, 윈도우즈 체크
 $cz['is_webview'] = is_webview();
@@ -74,4 +73,5 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Cache-Control: pre-check=0, post-check=0, max-age=0');
 header('Pragma: no-cache');
 
+new Route();
 require PATH.'/route.php';

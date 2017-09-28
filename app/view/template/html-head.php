@@ -7,7 +7,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <title><?php echo $config['cfg_title']?></title>
+        <title>cpfs | COZMO PHP fire starter</title>
         <?php
         echo js_css([
             ''
@@ -15,6 +15,7 @@
         ?>
     </head>
     <body class="
-        <?php echo $config['is_webview'] ? 'webview': ''?>
-        <?php echo $config['is_windows'] ? 'windows' : ''?>
+        <?php echo $cf['is_mobile'] ? 'mobile': ''?>
+        <?php echo $cf['is_webview'] ? 'webview': ''?>
+        <?php echo $cf['is_windows'] ? 'windows' : ''?>
     ">
