@@ -1,2 +1,2 @@
 # cpfs
-Cozmo phpp fire starter
+Cozmo php fire starter
