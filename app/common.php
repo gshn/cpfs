@@ -55,34 +55,12 @@ if (!empty($member['id'])) {
     $is_member = true;
 } else {
     $is_guest = true;
-    $mb->login('super@cpfs.dev', '1231', 1);
 }
-vardump($is_guest);
 
 // 웹뷰, 모바일, 윈도우즈 체크
 $cz['is_webview'] = is_webview();
 $cz['is_mobile'] = $cz['is_webview'] ? true : is_mobile();
 $cz['is_windows'] = is_windows();
-
-/**
- * 로그 남기기
- * 24시간에 1회만 남김
- */
-// if (LOG) {
-//     $visit = get_cookie('ck_visit');
-//
-//     if (empty($visit) || $visit !== TIME_YMD) {
-//         $vi_device = $is_webview ? 'webview' : ($is_mobile ? 'mobile' : 'desktop');
-//         $sql = "INSERT INTO {$cf['visit_table']}
-//                 SET mb_no = '{$user['mb_no']}',
-//                     vi_device = '{$vi_device}',
-//                     vi_user_agent = '{$_SERVER['HTTP_USER_AGENT']}',
-//                     vi_referer = '{$_SERVER['HTTP_REFERER']}',
-//                     vi_ip = '{$_SERVER['REMOTE_ADDR']}'";
-//         $rst = sql_query($sql);
-//         $visit = set_cookie('ck_visit', TIME_YMD, '+1 day');
-//     }
-// }
 
 /**
  * 자바스크립트에서 go(-1) 함수를 쓰면 폼값이 사라질때 해당 폼의 상단에 사용하면

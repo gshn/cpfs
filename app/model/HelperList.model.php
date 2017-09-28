@@ -233,7 +233,7 @@ abstract class HelperList
 
     public function insert($arr)
     {
-        $sql = 'INSERT INTO ' . self::$table . 'SET ';
+        $sql = 'INSERT INTO ' . self::$table . ' SET ';
         $values = [];
         foreach($arr as $key => $value) {
             if (property_exists(get_class($this), $key)) {
@@ -250,9 +250,9 @@ abstract class HelperList
         return $rst;
     }
 
-    public function update($arr, $key, $word)
+    public function update($arr, $col, $word)
     {
-        $sql = 'UPDATE ' . self::$table . 'SET ';
+        $sql = 'UPDATE ' . self::$table . ' SET ';
         $values = [];
         foreach($arr as $key => $value) {
             if (property_exists(get_class($this), $key)) {
@@ -264,8 +264,10 @@ abstract class HelperList
                 }
             }
         }
-        $sql .= "WHERE {$key} = ?";
+        $sql .= " WHERE {$col} = ? ";
         $values[] = $word;
+        echo $sql;
+        vardump($values);
         $rst = self::$pdo::query($sql, $values);
 
         return $rst;
@@ -276,7 +278,7 @@ abstract class HelperList
         $sql = "DELETE
                 {$this->common}
                 WHERE {$key} = ?";
-        $row = self::$pdo::query($sql, [$value])->fetch();
+        $row = self::$pdo::query($sql, [$value]);
 
         return $rst;
     }

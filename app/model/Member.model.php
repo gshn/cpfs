@@ -5,6 +5,7 @@ class Member extends HelperList
     protected $email;
     protected $hp;
     protected $name;
+    protected $password;
     protected $datetime;
     protected $timestamp;
     protected $leavedate;
@@ -80,7 +81,7 @@ class Member extends HelperList
         session_destroy();
 
         self::_setAutoLogin(null);
-        
+
         location('/');
     }
 }
