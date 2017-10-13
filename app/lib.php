@@ -51,7 +51,7 @@ function location(string $url)
 
 
 /**
- * @brief 쿠키 네임을 crypt로 암호화 해서 생성함
+ * @brief 쿠키 네임을 md5로 암호화 해서 생성함
  * @author hheo (hheo@cozmoworks.com)
  * @param string $name 쿠키 네임
  * @param string $value 값
@@ -67,7 +67,7 @@ function location(string $url)
  */
 function set_cookie($name, $value, $expire = '+1 month', $path = '/', $domain = DOMAIN, $secure = false, $httponly = true)
 {
-    $name = crypt($name, BLOWFISH);
+    $name = md5($name);
 
     if ($value === null) {
         unset($_COOKIE[$name]);
@@ -82,7 +82,7 @@ function set_cookie($name, $value, $expire = '+1 month', $path = '/', $domain = 
 }
 
 /**
- * @brief crypt로 암호화 해서 생성된 쿠키 네임의 값을 찾음
+ * @brief md5로 암호화 해서 생성된 쿠키 네임의 값을 찾음
  * @author hheo (hheo@cozmoworks.com)
  * @param string $name 쿠키 네임
  * @return string | null
@@ -92,7 +92,7 @@ function set_cookie($name, $value, $expire = '+1 month', $path = '/', $domain = 
  */
 function get_cookie($name)
 {
-    $name = crypt($name, BLOWFISH);
+    $name = md5($name);
 
     if (array_key_exists($name, $_COOKIE)) {
         return base64_decode($_COOKIE[$name]);
@@ -349,4 +349,19 @@ function api_result($msg = true, $data = null)
 
     }
     exit;
+}
+
+function template($path, $head = null)
+{
+    if ($head === 'no-header') {
+        require_once VIEW.'/template/html-head.php';
+    } else {
+        require_once VIEW.'/template/header.php';
+    }
+    require_once VIEW.$path.'.php';
+    if ($head === 'no-header') {
+        require_once VIEW.'/template/body-html.php';
+    } else {
+        require_once VIEW.'/template/footer.php';
+    }
 }

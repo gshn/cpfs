@@ -1,3 +1,6 @@
+<?php
+global $cf;
+?>
 <!DOCTYPE html>
 <html lang="ko">
     <head>
@@ -7,7 +10,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <title>cpfs | COZMO PHP fire starter</title>
+        <title>admin | 우리동네고물상 동고물</title>
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
         <?php echo js_css([
             '/css/bootstrap.css',

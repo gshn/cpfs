@@ -41,7 +41,7 @@ if (!file_exists(__DIR__.'/app.php')) {
 require __DIR__.'/app.php';
 
 define('PATH', __DIR__);
-define('CTLR', PATH.'/'.CTLR_DIR);
+define('CTRL', PATH.'/'.CTRL_DIR);
 define('MODEL', PATH.'/'.MODEL_DIR);
 define('HELPER', PATH.'/'.HELPER_DIR);
 define('VIEW', PATH.'/'.VIEW_DIR);
@@ -57,6 +57,8 @@ define('IMG', URL.'/'.IMG_DIR);
 
 define('UPLOAD_PATH', ROOT.'/'.UPLOAD_DIR);
 define('UPLOAD_URL', URL.'/'.UPLOAD_DIR);
+
+define('PUSH_SERVER_ADDRESS', 'http://push.gomool.kr/api');
 
 /**
  * 동일한 세션은 동일한 시간을 사용하도록 상수화
@@ -77,14 +79,15 @@ define('HIS', date('H:i:s', TIME));
  * @see /app/lib.php array login_check()
  * @see /app/route.php
  */
-$pdo = $cz = $member = [];
+$pdo = $cz = $admin = [];
 $cf['query_time'] = 0;
 $cf['query_debug'] = null;
 $cf['is_mobile'] = $cf['is_webview'] = $cf['is_windows'] = false;
 
-$is_guest = $is_member = $is_admin = false;
+$is_guest = $is_admin = false;
 
-$uris = explode('/', $_SERVER['REQUEST_URI']);
+$uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+$uris = explode('/', $uri);
 $uris = array_pad($uris, 5, null);
 
 /**
@@ -96,7 +99,7 @@ function modelLoader($class) {
     } else if (strpos($class, 'Model') !== false) {
         require MODEL.'/'.$class.'.php';
     } else {
-        require CTLR.'/'.strtolower($class).'/'.$class.'.php';
+        require CTRL.'/'.strtolower($class).'/'.$class.'.php';
     }
 }
 spl_autoload_register('modelLoader');

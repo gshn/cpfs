@@ -43,16 +43,16 @@ if (!empty($cf['db_name']) && !empty($cf['db_user']) && !empty($cf['db_pass']) &
      * @see control/user/Login-check.php
      * @see system/lib.php array login_check()
      */
-    $mb = new Member();
+    $ad = new Admin();
     if (!empty($_SESSION['id'])) {
-        $member = $mb->getRow('id', $_SESSION['id']);
+        $admin = $ad->getRow('id', $_SESSION['id']);
     } else {
-        $member = $mb->getAutoLogin();
+        $admin = $ad->getAutoLogin();
     }
 }
 
-if (!empty($member['id'])) {
-    $is_member = true;
+if (!empty($admin['id'])) {
+    $is_admin = true;
 } else {
     $is_guest = true;
 }
@@ -73,5 +73,4 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Cache-Control: pre-check=0, post-check=0, max-age=0');
 header('Pragma: no-cache');
 
-new Route();
 require PATH.'/route.php';

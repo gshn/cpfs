@@ -75,6 +75,16 @@ class DatabaseHelper
         return $rst;
     }
 
+    public static function quote($stx)
+    {
+        return self::$pdo->quote($stx);
+    }
+
+    public static function lastInsertId()
+    {
+        return self::$pdo->lastInsertId();
+    }
+
     public static function getDatabaseName()
     {
         return self::$name;

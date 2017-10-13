@@ -6,7 +6,16 @@
  * @author hheo (hheo@cozmoworks.com)
  * @see /app/model/Database.model.php
  * @see /app/common.php
- */
+**/
+
+interface ListRow
+{
+    public function list();
+    public function listUpdate();
+    public function row($id);
+    public function rowUpdate();
+}
+
 abstract class ModelHelper
 {
     // 한 페이지 게시물 수
@@ -24,6 +33,7 @@ abstract class ModelHelper
     protected $where;
     protected $order;
     protected $limit;
+    protected $count;
 
     public function __construct($table = null, $connect = null)
     {
@@ -35,9 +45,10 @@ abstract class ModelHelper
         $this->common = 'FROM '.self::$table;
         $this->select = '*';
         $this->where = ' WHERE (1) ';
+        $this->count = -1;
     }
 
-    private static function _getQueryVars()
+    protected static function _getQueryVars()
     {
         $vars = [
             'sfl' => FILTER_SANITIZE_STRING,
@@ -68,18 +79,29 @@ abstract class ModelHelper
         return get_vars($vars);
     }
 
-    private function _getTotalPage()
+    protected function _getTotalPage()
     {
         extract(self::_getQueryVars());
 
-        $total = ceil($this->getTotalCount() / $rows);
+        if ($this->count === -1) {
+            $this->count = $this->getTotalCount();
+        }
+        $total = ceil($this->count / $rows);
 
         return $total;
     }
 
-    protected static function _getVars($filters)
+    protected function _getVars($filters = null)
     {
         $args = $vars = [];
+
+        if ($filters === null) {
+            $cols = $this->getColumn('name');
+            $filters = [];
+            foreach($cols as $col) {
+                $filters[$col['name']] = FILTER_SANITIZE_STRING;
+            }
+        }
 
         foreach($filters as $key => $value) {
             isset($_REQUEST[$key]) ? $args[$key] = $_REQUEST[$key] : null;
@@ -102,19 +124,36 @@ abstract class ModelHelper
         return $qstr;
     }
 
+    public function getQueryStringInput()
+    {
+        $qstrInput = null;
+        foreach(self::_getQueryVars() as $key => $value) {
+            if (!empty($value)) {
+                $qstrInput .= '<input type="hidden" name="'.$key.'" value="'.$value.'">'.PHP_EOL;
+            }
+        }
+
+        return $qstrInput;
+    }
+
     public function getTotalCount($sql_count = 'COUNT(*)')
     {
         $sql = "SELECT {$sql_count}
                 {$this->common}
                 {$this->where}";
-        $count = self::$pdo::query($sql)->fetchColumn();
+        $count = (int)self::$pdo::query($sql)->fetchColumn();
 
+        $this->count = $count;
         return $count;
     }
 
     public function getRow($key, $value, $select = '*')
     {
-        $sql = "SELECT {$select}
+        if ($select !== '*') {
+            $this->select = $select;
+        }
+
+        $sql = "SELECT {$this->select}
                 {$this->common}
                 WHERE {$key} = ?";
         $row = self::$pdo::query($sql, [$value])->fetch();
@@ -122,12 +161,12 @@ abstract class ModelHelper
         return $row;
     }
 
-    public function getList($limit = null)
+    public function getList($order = null, $limit = null, $fetch = PDO::FETCH_ASSOC)
     {
         extract(self::_getQueryVars());
 
-        if (!empty($sst) && !empty($sod) && property_exists(get_class($this), $sst)) {
-            $this->order = "ORDER BY {$sst} {$sod}";
+        if ($order !== null) {
+            $this->order = $order;
         }
 
         if ($limit === null) {
@@ -142,7 +181,7 @@ abstract class ModelHelper
                 {$this->where}
                 {$this->order}
                 {$this->limit}";
-        $list = self::$pdo::query($sql)->fetchAll();
+        $list = self::$pdo::query($sql)->fetchAll($fetch);
 
         return $list;
     }
@@ -204,7 +243,7 @@ abstract class ModelHelper
     public function getOrderBy($text, $col, $flag = 'ASC')
     {
         if (empty($col) || !property_exists(get_class($this), $col)) {
-            $anchor = "<a href=\"{$_SERVER['REQUEST_URI']}\">1{$text}</a>";
+            $anchor = "<a href=\"{$_SERVER['REQUEST_URI']}\">{$text}</a>";
             return $anchor;
         }
 
@@ -263,7 +302,7 @@ abstract class ModelHelper
         return $rst;
     }
 
-    public function update($arr, $col, $word)
+    public function update($arr, $where, $index = null)
     {
         $sql = 'UPDATE ' . self::$table . ' SET ';
         $values = [];
@@ -277,22 +316,49 @@ abstract class ModelHelper
                 }
             }
         }
-        $sql .= " WHERE {$col} = ? ";
-        $values[] = $word;
-        echo $sql;
-        vardump($values);
+        $sql .= " {$where} ";
+        if ($index !== null) {
+            $values[] = $index;
+        }
         $rst = self::$pdo::query($sql, $values);
 
         return $rst;
     }
 
-    public function delete($key, $value)
+    public function delete($where, $index = null)
     {
-        $sql = "DELETE
-                {$this->common}
-                WHERE {$key} = ?";
-        $row = self::$pdo::query($sql, [$value]);
+        $values = [];
+        $sql = 'DELETE FROM ' . self::$table;
+        $sql .= " {$where} ";
+        if ($index !== null) {
+            $values[] = $index;
+        }
+        $rst = self::$pdo::query($sql, $values);
 
         return $rst;
+    }
+
+    public function getColumn($needle = 'COLUMN_COMMENT')
+    {
+        $sql = "SELECT COLUMN_COMMENT, COLUMN_NAME
+                FROM information_schema.COLUMNS
+                WHERE TABLE_NAME = '".self::$table."'
+                ORDER BY ORDINAL_POSITION ASC";
+        $list = self::$pdo::query($sql)->fetchAll();
+
+        $cols = [];
+        $i = 0;
+        foreach($list as $row) {
+            if ($needle === 'COLUMN_COMMENT') {
+                $cols[$i] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
+            } else {
+                $cols[$i]['comment'] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
+                $cols[$i]['name'] = $row['COLUMN_NAME'];
+            }
+
+            $i += 1;
+        }
+
+        return $cols;
     }
 }
