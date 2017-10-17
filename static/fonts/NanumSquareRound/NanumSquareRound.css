@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'NanumSquareRound';
+    src: url('NanumSquareRoundEB.eot');
+    src: local('NanumSquareRound ExtraBold'), local('NanumSquareRoundEB'),
+    url('NanumSquareRoundEB.eot?#iefix') format('embedded-opentype'),
+    url('NanumSquareRoundEB.woff2') format('woff2'),
+    url('NanumSquareRoundEB.woff') format('woff'),
+    url('NanumSquareRoundEB.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareRound';
+    src: url('NanumSquareRoundB.eot');
+    src: local('NanumSquareRound Bold'), local('NanumSquareRoundB'),
+    url('NanumSquareRoundB.eot?#iefix') format('embedded-opentype'),
+    url('NanumSquareRoundB.woff2') format('woff2'),
+    url('NanumSquareRoundB.woff') format('woff'),
+    url('NanumSquareRoundB.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareRound';
+    src: url('NanumSquareRoundL.eot');
+    src: local('NanumSquareRound Light'), local('NanumSquareRoundL'),
+    url('NanumSquareRoundL.eot?#iefix') format('embedded-opentype'),
+    url('NanumSquareRoundL.woff2') format('woff2'),
+    url('NanumSquareRoundL.woff') format('woff'),
+    url('NanumSquareRoundL.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareRound';
+    src: url('NanumSquareRoundR.eot');
+    src: local('NanumSquareRound Regular'), local('NanumSquareRoundR'),
+    url('NanumSquareRoundR.eot?#iefix') format('embedded-opentype'),
+    url('NanumSquareRoundR.woff2') format('woff2'),
+    url('NanumSquareRoundR.woff') format('woff'),
+    url('NanumSquareRoundR.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
