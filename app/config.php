@@ -9,29 +9,6 @@
  */
 
 /**
- * 개발모드 관련 상수
- * SQL_SLOW_TIME 밀리초보다 더 걸리는 쿼리를 디버그창에 표기
- * DEV 모드일 경우 모든 에러 리포트 및 사용중인 변수들을 앱 하단에 노출
- * @see /static/index.php
- * @see /app/lib.php sql_query()
- */
-if ($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
-    define('DEV', TRUE);
-    define('LOG', FALSE);
-} else {
-    define('DEV', FALSE);
-    define('LOG', TRUE);
-}
-define('SQL_SLOW_TIME', 0.005);
-
-if (DEV) {
-    error_reporting(-1);
-    ini_set('display_errors', 1);
-} else {
-    error_reporting(0);
-}
-
-/**
  * 디렉터리 설정 및 쿠키 도메인 설정
  */
 if (!file_exists(__DIR__.'/app.php')) {
@@ -58,8 +35,6 @@ define('IMG', URL.'/'.IMG_DIR);
 define('UPLOAD_PATH', ROOT.'/'.UPLOAD_DIR);
 define('UPLOAD_URL', URL.'/'.UPLOAD_DIR);
 
-define('PUSH_SERVER_ADDRESS', 'http://push.gomool.kr/api');
-
 /**
  * 동일한 세션은 동일한 시간을 사용하도록 상수화
  */
@@ -69,32 +44,10 @@ define('YMD', date('Y-m-d', TIME));
 define('HIS', date('H:i:s', TIME));
 
 /**
- * 전역 변수 선언
- * $pdo object DB 커넥터 객체
- * $cz array DB 테이블 명 등 여러가지 변수를 전역적으로 만들어서 갖고 있음
- * $is 각종 설정정보를 true, false 로 저장
- * $uri route.php 에서 사용할 전역 변수
- * rendered_time, query_time, sql_debug DEV 모드에서 사용하는 변수
- * @see /app/common.php
- * @see /app/lib.php array login_check()
- * @see /app/route.php
- */
-$pdo = $cz = $admin = [];
-$cf['query_time'] = 0;
-$cf['query_debug'] = null;
-$cf['is_mobile'] = $cf['is_webview'] = $cf['is_windows'] = false;
-
-$is_guest = $is_admin = false;
-
-$uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-$uris = explode('/', $uri);
-$uris = array_pad($uris, 5, null);
-
-/**
  * 모델 Auto Loader
  */
 function modelLoader($class) {
-    if (strpos($class, 'Helper') !== false) {
+    if (strpos($class, 'Helper') !== false || strpos($class, 'Trait') !== false) {
         require HELPER.'/'.$class.'.php';
     } else if (strpos($class, 'Model') !== false) {
         require MODEL.'/'.$class.'.php';

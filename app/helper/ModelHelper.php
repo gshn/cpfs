@@ -8,14 +8,6 @@
  * @see /app/common.php
 **/
 
-interface ListRow
-{
-    public function list();
-    public function listUpdate();
-    public function row($id);
-    public function rowUpdate();
-}
-
 abstract class ModelHelper
 {
     // 한 페이지 게시물 수
@@ -27,6 +19,8 @@ abstract class ModelHelper
     static $pdo;
     // 사용할 테이블명
     static $table;
+    // 사용할 네임스페이스
+    static $namespace;
 
     protected $common;
     protected $select;
@@ -41,6 +35,7 @@ abstract class ModelHelper
 
         self::$table = $table === null ? strtolower(get_class($this)) : $table;
         self::$pdo = $connect === null ? $pdo : $connect;
+        self::$namespace = strtolower(get_class($this));
 
         $this->common = 'FROM '.self::$table;
         $this->select = '*';
@@ -104,7 +99,11 @@ abstract class ModelHelper
         }
 
         foreach($filters as $key => $value) {
-            isset($_REQUEST[$key]) ? $args[$key] = $_REQUEST[$key] : null;
+            if(isset($_REQUEST[$key])) {
+                $args[$key] = $_REQUEST[$key];
+            } else {
+                unset($filters[$key]);
+            }
         }
 
         $vars = filter_var_array($args, $filters);
@@ -297,6 +296,7 @@ abstract class ModelHelper
                 }
             }
         }
+
         $rst = self::$pdo::query($sql, $values);
 
         return $rst;

@@ -1,15 +1,31 @@
 <?php
-require HELPER.'/excel/PHPExcel.php';
 class ExcelHelper
 {
-    public function __construct()
+    public function contact()
     {
+        $li = new Contact();
+        $title = '접촉기록';
+
+        $cols = $li->getColumn();
+        $cols[] = '비콘 시리얼';
+        $cols[] = '비콘 지점명';
+        $cols[] = 'GPS 지점명';
+        $cols[] = 'GPS 색인';
+        $cols[] = 'GPS 위도';
+        $cols[] = 'GPS 경도';
+        $list = $li->getList(null, '', PDO::FETCH_NUM);
+
+        if (count($list) < 1) {
+            swal('자료없음', '출력할 자료가 없습니다.', 'info');
+        }
+
+        $this->excelout($title, $cols, $list);
     }
 
-    public function user()
+    public function beacon()
     {
-        $li = new User();
-        $title = '사용자';
+        $li = new Beacon();
+        $title = '비콘';
 
         $cols = $li->getColumn();
         $list = $li->getList(null, '', PDO::FETCH_NUM);
@@ -21,15 +37,27 @@ class ExcelHelper
         $this->excelout($title, $cols, $list);
     }
 
-    public function product()
+    public function gps()
     {
-        $li = new Product();
-        $title = '상품';
+        $li = new Gps();
+        $title = 'GPS';
 
         $cols = $li->getColumn();
-        $cols[] = '아이디';
-        $cols[] = '이메일';
-        $cols[] = '닉네임';
+        $list = $li->getList(null, '', PDO::FETCH_NUM);
+
+        if (count($list) < 1) {
+            swal('자료없음', '출력할 자료가 없습니다.', 'info');
+        }
+
+        $this->excelout($title, $cols, $list);
+    }
+
+    public function admin()
+    {
+        $li = new Admin();
+        $title = '담당자';
+
+        $cols = $li->getColumn();
         $list = $li->getList(null, '', PDO::FETCH_NUM);
 
         if (count($list) < 1) {
@@ -41,14 +69,15 @@ class ExcelHelper
 
     public function excelout($title, $cols, $list)
     {
+        require HELPER.'/excel/PHPExcel.php';
         $objPHPExcel = new PHPExcel();
 
         $objPHPExcel->getProperties()
-            ->setCreator('동고물')
-            ->setLastModifiedBy('동고물')
+            ->setCreator('KEPCO')
+            ->setLastModifiedBy('KEPCO')
             ->setTitle($title)
-            ->setSubject('동고물 '.$title.' 데이터')
-            ->setDescription('동고물 '.$title.' 데이터')
+            ->setSubject('KEPCO '.$title.' 데이터')
+            ->setDescription('KEPCO '.$title.' 데이터')
             ->setKeywords($title)
             ->setCategory($title);
 

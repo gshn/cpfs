@@ -3,6 +3,8 @@ class UserModel extends ModelHelper
 {
     protected $id;
     protected $account_type;
+    protected $password;
+    protected $package_name;
     protected $login_id;
     protected $login_pw;
     protected $email;
@@ -33,16 +35,9 @@ class UserModel extends ModelHelper
         extract(self::_getQueryVars());
 
         if ($stx) {
-            $this->where .= " AND (login_id LIKE '{$stx}%' ";
-            $this->where .= " OR email LIKE '{$stx}%' ";
-            $this->where .= " OR nickname LIKE '%{$stx}%' ";
-            $this->where .= " OR hp LIKE '%{$stx}%' ";
+            $this->where .= " AND (login_id = '{$stx}' ";
+            $this->where .= " OR nickname = '{$stx}' ";
             $this->where .= " ) ";
-        }
-
-        if (empty($sst) || empty($sod)) {
-            $this->sst = 'id';
-            $this->sod = 'DESC';
         }
 
         if (!empty($sst) && !empty($sod) && property_exists(get_class($this), $sst)) {

@@ -325,27 +325,17 @@ function js_css($urls)
 
     return $html;
 }
-function api_result($msg = true, $data = null)
+function api_result($res = 200, $data = null)
 {
-    if ($msg !== true) {
-        $res = [
-            'res' => 400,
-            'error' => $msg
-        ];
+    if ($res !== 200) {
+        $data['res'] = $res;
 
-        echo json_encode($res);
+        echo json_encode($data);
 
     } else {
+        $data['res'] = 200;
 
-        $res = [
-            'res' => 200
-        ];
-
-        if ($data !== null) {
-            $res['data'] = $data;
-        }
-
-        echo json_encode($res);
+        echo json_encode($data);
 
     }
     exit;

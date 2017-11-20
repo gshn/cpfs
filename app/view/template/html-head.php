@@ -1,17 +1,18 @@
 <?php
-global $cf;
+global $cf, $uris, $uri, $is_guest, $is_user;
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
     <head>
+        <title><?php echo $cf['title']?></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <title>admin | 우리동네고물상 동고물</title>
-        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
+        <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
         <?php echo js_css([
             '/css/bootstrap.css',
             '/css/app.css'

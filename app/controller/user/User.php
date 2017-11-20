@@ -1,123 +1,103 @@
 <?php
-class User extends UserModel implements ListRow
+class User extends UserModel
 {
-    public function __construct()
+    private static function _password($password)
     {
-        parent::__construct();
+        $sql = 'SELECT PASSWORD(?) AS password';
+        $rst = self::$pdo->query($sql, [$password]);
+        $password = $rst->fetchColumn();
+
+        return $password;
     }
 
-    public function list()
+    public function getVars($filters = null)
     {
-        extract(self::_getQueryVars());
-        $qstr = self::getQueryString();
-        $total_count = $this->getTotalCount();
-        $paging = $this->getPaging();
-        $list = $this->getList();
-
-        require VIEW.'/template/header.php';
-        require VIEW.'/user/user-list.php';
-        require VIEW.'/template/footer.php';
-    }
-
-    public function listUpdate()
-    {
-        $filters = [
-            'ids' => [
-                'filter' => FILTER_VALIDATE_INT,
-                'flags'  => FILTER_FORCE_ARRAY,
-                'options' => [
-                    'min_range' => 1
-                ]
-            ]
-        ];
-        extract($this->_getVars($filters));
-
-        $qstr = self::getQueryString();
-
-        $sql_where = " WHERE ( ";
-        $cnt = count($ids);
-        $i = 0;
-        foreach($ids as $id) {
-            $sql_where .= " id = '{$id}' ";
-
-            $i += 1;
-            if ($cnt !== $i) {
-                $sql_where .= " OR ";
-            }
+        if ($filters === null) {
+            $filters = [
+                'id' => FILTER_VALIDATE_INT,
+                'hp' => FILTER_SANITIZE_STRING,
+                'name' => FILTER_SANITIZE_STRING,
+                'password' => FILTER_UNSAFE_RAW,
+                'secession' => FILTER_VALIDATE_BOOLEAN,
+                'auto' => FILTER_VALIDATE_BOOLEAN
+            ];
         }
-        $sql_where .= " ) ";
-
-        $this->update([
-            'delete_date' => YMDHIS,
-            'hidden' => 'y'
-        ], $sql_where);
-
-        swal('성공!', '사용자를 일괄 탈퇴처리 했습니다.', 'success', '/user?'.$qstr);
-    }
-
-    public function row($id)
-    {
-        extract(self::_getQueryVars());
-        $qstr = self::getQueryString();
-
-        $row = $this->getRow('id', $id);
-
-        require VIEW.'/template/header.php';
-        require VIEW.'/user/user-row.php';
-        require VIEW.'/template/footer.php';
-    }
-
-    public function password($password)
-    {
-        $sql = "SELECT PASSWORD({$password})";
-        return self::$pdo::query($sql)->fetchColumn();
-    }
-
-    public function rowUpdate()
-    {
-        $qstr = self::getQueryString();
-        $filters = [
-            'id' => FILTER_VALIDATE_INT,
-            'account_type' => FILTER_SANITIZE_STRING,
-            'login_id' => FILTER_SANITIZE_STRING,
-            'email' => FILTER_VALIDATE_EMAIL,
-            'nickname' => FILTER_SANITIZE_STRING,
-            'hp' => FILTER_SANITIZE_STRING,
-            'postzip' => FILTER_SANITIZE_STRING,
-            'addr_01' => FILTER_SANITIZE_STRING,
-            'addr_02' => FILTER_SANITIZE_STRING
-        ];
         $vars = $this->_getVars($filters);
-        extract($vars);
 
-        $login_pw = isset($_REQUEST['login_pw']) ? $_REQUEST['login_pw'] : null;
+        return $vars;
+    }
 
-        if (empty($id)) {
-            swal('실패!', '수정할 사용자가 선택되지 않았습니다.', 'warning');
+    private static function _setAutoLogin($user = null)
+    {
+        global $pdo;
+
+        if ($user === null) {
+            set_cookie('id', null);
+            set_cookie('autoLogin', null);
+        } else if (is_array($user)) {
+            $hash = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$user['password']);
+            set_cookie('id', $user['id']);
+            set_cookie('autoLogin', $hash);
+        }
+    }
+
+    public function getAutoLogin()
+    {
+        $id = (int)get_cookie('id');
+        if (!empty($id)) {
+            $user = self::getRow('id', $id);
+            $hash_key = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$user['password']);
+            $hash = get_cookie('autoLogin');
+            if (!empty($hash) && $hash === $hash_key) {
+                if ($user['secession'] === '회원') {
+                    $_SESSION['id'] = $id;
+                    return $user;
+                }
+            }
+            self::_setAutoLogin(null);
         }
 
-        if (empty($account_type)) {
-            swal('실패!', '계정타입을 입력해주세요.', 'warning');
+        return [];
+    }
+
+    public function login()
+    {
+        extract($this->getVars($filters = [
+            'hp' => FILTER_SANITIZE_STRING,
+            'password' => FILTER_UNSAFE_RAW,
+            'auto' => FILTER_VALIDATE_BOOLEAN
+        ]));
+
+        $hp = get_hp_number($hp);
+        $user = self::getRow('hp', $hp);
+
+        if (empty($user['id']) || ($user['password'] !== self::_password($password))) {
+            swal('실패!', '가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.', 'warning');
         }
 
-        if (empty($login_id)) {
-            swal('실패!', '아이디를 입력해주세요.', 'warning');
+        if ($user['secession'] === '탈퇴') {
+            $date = date('y년 m월 d일', strtotime($user['timestamp']));
+            swal('실패!', '탈퇴한 아이디이므로 접근하실 수 없습니다.\\n탈퇴일 : '.$date, 'warning');
         }
 
-        if (empty($email)) {
-            swal('실패!', '이메일을 입력해주세요.', 'warning');
+        $_SESSION['id'] = $user['id'];
+
+        if ($auto !== null) {
+            self::_setAutoLogin($user);
+        } else {
+            self::_setAutoLogin(null);
         }
 
-        if (empty($hp)) {
-            swal('실패!', '휴대전화를 입력해주세요.', 'warning');
-        }
+        location('/');
+    }
 
-        if (!empty($login_pw)) {
-            $vars['login_pw'] = $this->password($login_pw);
-        }
+    public function logout()
+    {
+        session_unset();
+        session_destroy();
 
-        $this->update($vars, 'WHERE id = ?', $id);
+        self::_setAutoLogin(null);
 
-        swal('성공!', '사용자 정보를 수정 했습니다.', 'success', '/user/row/'.$id.'?'.$qstr);
+        location('/');
     }
 }

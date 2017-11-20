@@ -1,7 +1,6 @@
-    </div><!-- container -->
-    <footer id="footer" class="container-fluid text-center pad-top pad-bottom bg-white">
-        2017 © 우리동네고물상 동고물 by Cozmo.
+    </main>
+    <footer id="footer">
     </footer>
-</div><!-- wrap -->
+</div>
 <?php
 require VIEW.'/template/body-html.php';

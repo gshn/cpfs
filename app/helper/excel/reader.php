@@ -26,6 +26,8 @@
 * @see        OLE, Spreadsheet_Excel_Writer
 */
 
+set_time_limit(0);
+ini_set('memory_limit', -1);
 
 //require 'PEAR.php';
 require 'oleread.inc.php';

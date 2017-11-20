@@ -43,25 +43,24 @@ if (!empty($cf['db_name']) && !empty($cf['db_user']) && !empty($cf['db_pass']) &
      * @see control/user/Login-check.php
      * @see system/lib.php array login_check()
      */
-    $ad = new Admin();
+    $us = new User();
     if (!empty($_SESSION['id'])) {
-        $admin = $ad->getRow('id', $_SESSION['id']);
+        $user = $us->getRow('id', $_SESSION['id']);
     } else {
-        $admin = $ad->getAutoLogin();
+        $user = $us->getAutoLogin();
     }
 }
 
-if (!empty($admin['id'])) {
-    $is_admin = true;
+if (!empty($user['id'])) {
+    $is_user = true;
 } else {
     $is_guest = true;
 }
 
 // 웹뷰, 모바일, 윈도우즈 체크
-$cz['is_webview'] = is_webview();
-$cz['is_mobile'] = $cz['is_webview'] ? true : is_mobile();
-$cz['is_windows'] = is_windows();
-
+$cf['is_webview'] = is_webview();
+$cf['is_mobile'] = $cf['is_webview'] ? true : is_mobile();
+$cf['is_windows'] = is_windows();
 /**
  * 자바스크립트에서 go(-1) 함수를 쓰면 폼값이 사라질때 해당 폼의 상단에 사용하면
  * 캐쉬의 내용을 가져옴. 브라우저 별로 모두 완전한지는 검증되지 않음
