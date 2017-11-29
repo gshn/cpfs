@@ -1,8 +1,0 @@
-{
-    "api_url" : "https://api.gomool.kr",
-    "push_url" : "https://push.gomool.kr",
-    "version" : "100007",
-    "sapi_url" : "https://sapi.gomool.kr",
-    "spush_url" : "https://spush.gomool.kr",
-    "tversion" : "100007"
-}

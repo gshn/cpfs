@@ -11,7 +11,7 @@
         <p class="py-1">p 1rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</p>
         <small class="py-1">small 0.8rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</small>
     </div>
-    <div class="p-3">
+    <!--div class="p-3">
         <h1 class="py-1 weight-300">weight-300(light)</h1>
         <h1 class="py-1 weight-300">h1 2.34375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h1>
         <h2 class="py-1 weight-300">h2 1.875rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h2>
@@ -21,7 +21,7 @@
         <h6 class="py-1 weight-300">h6 0.9375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h6>
         <p class="py-1 weight-300">p 1rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</p>
         <small class="py-1 weight-300">small 0.8rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</small>
-    </div>
+    </div-->
     <div class="p-3">
         <h1 class="py-1 weight-700">weight-700(bold)</h1>
         <h1 class="py-1 weight-700">h1 2.34375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h1>
@@ -33,7 +33,7 @@
         <p class="py-1 weight-700">p 1rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</p>
         <small class="py-1 weight-700">small 0.8rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</small>
     </div>
-    <div class="p-3">
+    <!--div class="p-3">
         <h1 class="py-1 weight-900">weight-900(extra bold)</h1>
         <h1 class="py-1 weight-900">h1 2.34375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h1>
         <h2 class="py-1 weight-900">h2 1.875rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h2>
@@ -43,7 +43,7 @@
         <h6 class="py-1 weight-900">h6 0.9375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h6>
         <p class="py-1 weight-900">p 1rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</p>
         <small class="py-1 weight-900">small 0.8rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</small>
-    </div>
+    </div-->
 
     <!-- Navbar
       ================================================== -->
@@ -756,32 +756,6 @@
                 <div class="bs-component">
                     <div>
                         <ul class="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">&laquo;</a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">4</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">5</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">&raquo;</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <ul class="pagination pagination-lg">
                             <li class="page-item disabled">
                                 <a class="page-link" href="#">&laquo;</a>
                             </li>

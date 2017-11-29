@@ -1,5 +1,7 @@
 <?php
-class UserModel extends ModelHelper
+namespace model;
+
+class UserModel extends Model
 {
     protected $id;
     protected $account_type;
@@ -45,5 +47,27 @@ class UserModel extends ModelHelper
         } else {
             $this->order = "ORDER BY id DESC";
         }
+    }
+
+    public function getRow($key, $value, $package_name = null, $select = '*')
+    {
+        if ($select !== '*') {
+            $this->select = $select;
+        }
+
+        if ($package_name !== null) {
+            $sql = "SELECT {$this->select}
+                    {$this->common}
+                    WHERE package_name = '{$package_name}'
+                    AND {$key} = ?";
+        } else {
+            $sql = "SELECT {$this->select}
+                    {$this->common}
+                    WHERE {$key} = ?";
+        }
+
+        $row = self::$pdo::query($sql, [$value])->fetch();
+
+        return $row;
     }
 }

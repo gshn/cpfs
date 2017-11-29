@@ -32,9 +32,11 @@
  * @repository https://github.com/gshn/cpfs
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://cozmogames.com
- * @since	Version 1.5
+ * @since	Version 1.7
  */
-require __DIR__.'/../app/common.php';
+require __DIR__.'/../app/core.php';
+
+use helper\Library;
 
 /**
  * 개발 모드일 경우 전역변수들 디버깅
