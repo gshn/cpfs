@@ -1,11 +1,15 @@
 ## upload log ##
 .well-known
 *.log
-log
-upload
+log/
+logs/
+uploads/
+vendor/
 .ftpconfig
 .ftpignore
-app/app.php
+src/config.php
+.vscode
+
 # Created by https://www.gitignore.io/api/macos,windows
 
 ### macOS ###

@@ -1,0 +1,196 @@
+@charset "utf-8";
+html {
+    font-size: 14px;
+}
+
+@media only screen and (max-width: 991.98px) {
+    html {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 575.98px) {
+    html {
+        font-size: 12.5px;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.font-weight-900 {
+    font-weight: 900 !important;
+}
+
+.font-weight-700 {
+    font-weight: 700 !important;
+}
+
+.font-weight-400 {
+    font-weight: 400 !important;
+}
+
+.font-weight-300 {
+    font-weight: 300 !important;
+}
+
+.font-weight-100 {
+    font-weight: 100 !important;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.box-shadow {
+    box-shadow: 0px 0px 5px rgba(50, 50, 50, .2);
+}
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.y-50 {
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.x-50 {
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.top-50 {
+    top: 50%;
+}
+
+.top-40 {
+    top: 40%;
+}
+
+.top-30 {
+    top: 30%;
+}
+
+.top-20 {
+    top: 20%;
+}
+
+.top-10 {
+    top: 10%;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.left-50 {
+    left: 50%;
+}
+
+.left-40 {
+    left: 40%;
+}
+
+.left-30 {
+    left: 30%;
+}
+
+.left-20 {
+    left: 20%;
+}
+
+.left-10 {
+    left: 10%;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.bottom-50 {
+    bottom: 50%;
+}
+
+.bottom-40 {
+    bottom: 40%;
+}
+
+.bottom-30 {
+    bottom: 30%;
+}
+
+.bottom-20 {
+    bottom: 20%;
+}
+
+.bottom-10 {
+    bottom: 10%;
+}
+
+.bottom-0 {
+    bottom: 0;
+}
+
+.right-50 {
+    right: 50%;
+}
+
+.right-40 {
+    right: 40%;
+}
+
+.right-30 {
+    right: 30%;
+}
+
+.right-20 {
+    right: 20%;
+}
+
+.right-10 {
+    right: 10%;
+}
+
+.right-0 {
+    right: 0;
+}
+
+.bg-cover {
+    background-position: center;
+    -webkit-background-size: cover;
+       -moz-background-size: cover;
+         -o-background-size: cover;
+            background-size: cover;
+}
+
+.bg-fixed {
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.login-hr {
+    background-color: #dfdfdf;
+    height: 4px;
+    display: block;
+    width: 100%;
+    margin-bottom: 3rem;
+}
+
+.login-col {
+    background-color: rgba(255, 255, 255, .7);
+}
+
+.thead-dark a {
+    display: block;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+}
