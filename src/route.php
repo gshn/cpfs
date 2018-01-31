@@ -6,6 +6,7 @@ use helper\Benchmark;
 use helper\Install;
 use controller\User;
 use controller\Notice;
+use controller\Api;
 
 $route = new Route();
 $is = Route::$is;
@@ -67,6 +68,10 @@ Route::post('/notice', function() {
 
 Route::post('/uploader', function() {
     $ckeditorUploader = new CkeditorUploader();
+});
+
+Route::get('/api', function() {
+    $api = new Api();
 });
 
 // 로그아웃
