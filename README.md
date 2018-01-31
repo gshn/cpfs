@@ -27,6 +27,8 @@ git clone https://github.com/gshn/cpfs app
 
 > 5. src/config.php 파일을 수정해서 전역적으로 사용할 변수들을 수정해주세요.
 
+> 6. http://domain/install 로 접속하시면 몇가지 예제 테이블을 데이터베이스에 등록 합니다.
+
 ## 버전별 주요 업그레이드
 v1.0
 > MVC 패턴 적용
@@ -41,3 +43,9 @@ v1.8
 > 전 프로세스 클래스화
 > 템플릿 함수를 통해서 변수 관리
 
+v1.9
+> ckeditor 모듈 포함
+> 범용적으로 사용 가능한 파일 업로드 클래스 적용
+> 예제로 사용할 install 클래스 추가
+    > /login - 로그인
+    > /notice - 게시판형태 (ckeditor 및 파일 업로드 예제)
