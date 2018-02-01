@@ -95,9 +95,5 @@ Route::get('/install', function() {
 });
 
 Route::get('/', function($req, $res) {
-    if ($res['user']) {
-        Route::location('/user');
-    } else {
-        Route::location('/bootstrap');
-    }
+    Route::main();
 });
