@@ -1,3 +1,16 @@
+<?php
+/**
+ * Template html-head.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <!doctype html>
 <html lang="ko">
     <head>

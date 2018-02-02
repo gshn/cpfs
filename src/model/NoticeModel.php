@@ -1,4 +1,15 @@
 <?php
+/**
+ * NoticeModel.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace model;
 
 use helper\Model;
@@ -14,9 +25,9 @@ class NoticeModel extends Model
     public function __construct($table =  null)
     {
         parent::__construct($table);
-        extract(parent::getQueryVars());
+        extract(parent::queryStrings());
 
-        $this->table_text = '공지사항';
+        $this->heading = '공지사항';
 
         if (!empty($stx)) {
             $this->where .= " AND (title LIKE '%{$stx}%' ";

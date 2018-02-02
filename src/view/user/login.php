@@ -1,3 +1,16 @@
+<?php
+/**
+ * User login.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <main id="container" class="container">
     <section class="row">
         <div class="offset-lg-4 col-lg-4 offset-1 col-10 login-col rounded border border-secondary mt-5 p-5">

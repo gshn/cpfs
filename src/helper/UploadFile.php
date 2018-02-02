@@ -1,4 +1,15 @@
 <?php
+/**
+ * UploadFile.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 class UploadFile
@@ -80,7 +91,7 @@ class UploadFile
     }
 
     /**
-     * @brief 파일명에 특수 문자 제거
+     * 파일명에 특수 문자 제거
      * @param string $name
      * @return string
      */
@@ -90,7 +101,7 @@ class UploadFile
     }
 
     /**
-     * @brief 파일사이즈 문자열로 얻기
+     * 파일사이즈 문자열로 얻기
      * @param int $size
      * @return string
      */

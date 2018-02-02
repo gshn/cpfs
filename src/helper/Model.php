@@ -1,11 +1,18 @@
 <?php
 /**
+ * Model.php
  * model 관리를 편리하게 도와주는 클래스
  * 공통적으로 자주 쓰이는 함수를 모음
  * 기본적으로 정해진 sql문은 미리 설정해두고 필요하면 오버라이딩해서 사용
- * @see /app/model/Database.model.php
- * @see /app/core.php
-**/
+ *
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 use PDO;
@@ -34,15 +41,15 @@ abstract class Model
     public $limit;
     public $count;
 
-    public $table_text;
+    public $heading;
 
     public function __construct($table = null, $connect = null)
     {
         $pdo = new Database();
         $class = explode('\\', strtolower(get_class($this)));
 
-        self::$table = $table === null ?  end($class) : $table;
-        self::$pdo = $connect === null ? $pdo : $connect;
+        self::$table = $table ?? end($class);
+        self::$pdo = $connect ?? $pdo;
         self::$namespace = end($class);
 
         $this->common = 'FROM '.self::$table;
@@ -51,9 +58,9 @@ abstract class Model
         $this->count = -1;
     }
 
-    public static function getQueryVars()
+    public static function queryStrings()
     {
-        $vars = [
+        return Library::vars([
             'sfl' => FILTER_SANITIZE_STRING,
             'stx' => FILTER_SANITIZE_STRING,
             'sst' => FILTER_SANITIZE_STRING,
@@ -77,24 +84,59 @@ abstract class Model
                     'min_range' => 1
                 ]
             ]
-        ];
-
-        return Library::getVars($vars);
+        ]);
     }
 
-    protected function _getTotalPage()
+    public static function queryString()
     {
-        extract(self::getQueryVars());
-
-        if ($this->count === -1) {
-            $this->count = $this->getTotalCount();
+        $qstr = null;
+        foreach(self::queryStrings() as $key => $value) {
+            if (!empty($value)) {
+                $qstr .= '&'.$key.'='.rawurlencode($value);
+            }
         }
-        $total = ceil($this->count / $rows);
 
-        return $total;
+        return $qstr;
     }
 
-    protected static function _emptyCheck($filters, $vars = null)
+    public static function queryStringsInput()
+    {
+        $qstrInput = null;
+        foreach(self::queryStrings() as $key => $value) {
+            if (!empty($value)) {
+                $qstrInput .= '<input type="hidden" name="'.$key.'" value="'.$value.'">'.PHP_EOL;
+            }
+        }
+
+        return $qstrInput;
+    }
+
+    private static function schemaColumn($needle = 'COLUMN_COMMENT')
+    {
+        $sql = "SELECT COLUMN_COMMENT, COLUMN_NAME
+                FROM information_schema.COLUMNS
+                WHERE TABLE_NAME = '".self::$table."'
+                AND TABLE_SCHEMA = '".self::$pdo::$name."'
+                ORDER BY ORDINAL_POSITION ASC";
+        $list = self::$pdo::query($sql)->fetchAll();
+
+        $cols = [];
+        $i = 0;
+        foreach($list as $row) {
+            if ($needle === 'COLUMN_COMMENT') {
+                $cols[$i] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
+            } else {
+                $cols[$i]['comment'] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
+                $cols[$i]['name'] = $row['COLUMN_NAME'];
+            }
+
+            $i += 1;
+        }
+
+        return $cols;
+    }
+
+    protected static function emptyVars($filters, $vars = null)
     {
         if ($vars === null) {
             $vars = $_REQUEST;
@@ -109,12 +151,12 @@ abstract class Model
         return TRUE;
     }
 
-    protected static function _getVars($filters = null)
+    protected static function validateVars($filters = null)
     {
         $args = $vars = [];
 
         if ($filters === null) {
-            $cols = self::getColumn('name');
+            $cols = self::schemaColumn('name');
             $filters = [];
             foreach($cols as $col) {
                 $filters[$col['name']] = FILTER_SANITIZE_STRING;
@@ -134,31 +176,20 @@ abstract class Model
         return $vars;
     }
 
-    public static function getQueryString()
+    private function totalPage()
     {
-        $qstr = null;
-        foreach(self::getQueryVars() as $key => $value) {
-            if (!empty($value)) {
-                $qstr .= '&'.$key.'='.rawurlencode($value);
-            }
+        extract(self::queryStrings());
+
+        if ($this->count === -1) {
+            $this->count = $this->totalCount();
         }
 
-        return $qstr;
+        $total = ceil($this->count / $rows);
+
+        return $total;
     }
 
-    public static function getQueryStringInput()
-    {
-        $qstrInput = null;
-        foreach(self::getQueryVars() as $key => $value) {
-            if (!empty($value)) {
-                $qstrInput .= '<input type="hidden" name="'.$key.'" value="'.$value.'">'.PHP_EOL;
-            }
-        }
-
-        return $qstrInput;
-    }
-
-    public function getTotalCount($sql_count = 'COUNT(*)')
+    public function totalCount($sql_count = 'COUNT(*)')
     {
         $sql = "SELECT {$sql_count}
                 {$this->common}
@@ -166,26 +197,13 @@ abstract class Model
         $count = (int)self::$pdo::query($sql)->fetchColumn();
 
         $this->count = $count;
+
         return $count;
-    }
-
-    public function getRow($key, $value, $select = '*')
-    {
-        if ($select !== '*') {
-            $this->select = $select;
-        }
-
-        $sql = "SELECT {$this->select}
-                {$this->common}
-                WHERE {$key} = ?";
-        $row = self::$pdo::query($sql, [$value])->fetch();
-
-        return $row;
     }
 
     public function getList($order = null, $limit = null, $fetch = PDO::FETCH_ASSOC)
     {
-        extract(self::getQueryVars());
+        extract(self::queryStrings());
 
         if ($order !== null) {
             $this->order = $order;
@@ -209,12 +227,12 @@ abstract class Model
         return $list;
     }
 
-    public function getPaging()
+    public function paging()
     {
-        extract(self::getQueryVars());
+        extract(self::queryStrings());
+        $qstr = self::queryString();
 
-        $total = $this->_getTotalPage();
-        $qstr = self::getQueryString();
+        $total = $this->totalPage();
 
         $qstr = preg_replace('#&page=[0-9]*#', '', $qstr);
         $qstr = preg_replace('#&amp;page=[0-9]*#', '', $qstr);
@@ -262,7 +280,7 @@ abstract class Model
         return $str;
     }
 
-    public function getOrderBy($text, $col, $flag = 'ASC', $class = null)
+    public function orderBy($text, $col, $flag = 'ASC', $class = null)
     {
         if (strpos($col, '.') > 0) {
             $cols = explode('.', $col);
@@ -271,8 +289,8 @@ abstract class Model
             $property = $col;
         }
 
-        extract(self::getQueryVars());
-        $qstr = self::getQueryString();
+        extract(self::queryStrings());
+        $qstr = self::queryString();
         $qstr = preg_replace('#&sst=.*&sod=(asc|desc|ASC|DESC)#', '', $qstr);
         $qstr = preg_replace('#&amp;sst=.*&amp;sod=(asc|desc|ASC|DESC)#', '', $qstr);
 
@@ -308,6 +326,20 @@ abstract class Model
         $anchor .= "href=\"".URI."?{$qstr}\">{$text}</a>";
 
         return $anchor;
+    }
+
+    public function getRow($key, $value, $select = '*')
+    {
+        if ($select !== '*') {
+            $this->select = $select;
+        }
+
+        $sql = "SELECT {$this->select}
+                {$this->common}
+                WHERE {$key} = ?";
+        $row = self::$pdo::query($sql, [$value])->fetch();
+
+        return $row;
     }
 
     public function insert($arr)
@@ -371,37 +403,17 @@ abstract class Model
         return $rst;
     }
 
-    public static function getColumn($needle = 'COLUMN_COMMENT')
+    public function heading()
     {
-        $sql = "SELECT COLUMN_COMMENT, COLUMN_NAME
-                FROM information_schema.COLUMNS
-                WHERE TABLE_NAME = '".self::$table."'
-                AND TABLE_SCHEMA = '".self::$pdo::$name."'
-                ORDER BY ORDINAL_POSITION ASC";
-        $list = self::$pdo::query($sql)->fetchAll();
-
-        $cols = [];
-        $i = 0;
-        foreach($list as $row) {
-            if ($needle === 'COLUMN_COMMENT') {
-                $cols[$i] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
-            } else {
-                $cols[$i]['comment'] = empty($row['COLUMN_COMMENT']) ? $row['COLUMN_NAME'] : $row['COLUMN_COMMENT'];
-                $cols[$i]['name'] = $row['COLUMN_NAME'];
-            }
-
-            $i += 1;
-        }
-
-        return $cols;
+        return $this->heading ?? ucfirst(self::$namespace);
     }
 
-    public function getCols()
+    public function columnOrderBys()
     {
-        $list = $this->getColumn(false);
+        $list = self::schemaColumn(false);
         $cols = [];
         foreach ($list as $row) {
-            $cols[$row['name']] = $this->getOrderBy($row['comment'], $row['name']);
+            $cols[$row['name']] = $this->orderBy($row['comment'], $row['name']);
         }
 
         return $cols;
@@ -409,15 +421,12 @@ abstract class Model
 
     public function rows()
     {
-        extract(self::getQueryVars());
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
-        $count = $this->getTotalCount();
-        $paging = $this->getPaging();
+        $heading = self::heading();
+        $count = $this->totalCount();
+        $paging = $this->paging();
         $list = $this->getList();
-        $cols = $this->getCols();
-        $inputs = $this->getQueryStringInput();
+        $cols = $this->columnOrderBys();
+        $inputs = $this->queryStringsInput();
 
         if (is_file(VIEW.'/'.self::$namespace.'/'.self::$namespace.'-list.php')) {
             $template = '/'.self::$namespace.'/'.self::$namespace.'-list';
@@ -426,9 +435,7 @@ abstract class Model
         }
 
         Route::template($template, [
-            'table_text' => $table_text,
-            'stx' => $stx,
-            'qstr' => $qstr,
+            'heading' => $heading,
             'count' => $count,
             'paging' => $paging,
             'list' => $list,
@@ -449,9 +456,9 @@ abstract class Model
                 ]
             ]
         ];
-        extract($this->_getVars($filters));
+        extract(parent::validateVars($filters));
 
-        $qstr = self::getQueryString();
+        $qstr = self::queryString();
 
         if ($req === 'list-delete') {
             $where = " WHERE ( ";
@@ -483,14 +490,12 @@ abstract class Model
         Route::location('/'.self::$namespace.'?'.$qstr);
     }
 
-    public function row($id = null)
+    public function row($id = NULL)
     {
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
+        $heading = self::heading();
         $row = $this->getRow('id', $id);
-        $inputs = self::getQueryStringInput();
-        $cols = self::getColumn('name');
+        $inputs = self::queryStringsInput();
+        $cols = self::schemaColumn('name');
 
         if (is_file(VIEW.'/'.self::$namespace.'/'.self::$namespace.'-row.php')) {
             $template = '/'.self::$namespace.'/'.self::$namespace.'-row';
@@ -499,8 +504,7 @@ abstract class Model
         }
 
         Route::template($template, [
-            'table_text' => $table_text,
-            'qstr' => $qstr,
+            'heading' => $heading,
             'row' => $row,
             'inputs' => $inputs,
             'cols' => $cols
@@ -509,8 +513,8 @@ abstract class Model
 
     public function rowUpdate()
     {
-        $qstr = self::getQueryString();
-        extract($vars = $this->_getVars());
+        $qstr = self::queryString();
+        extract($vars = parent::validateVars());
 
         if (!empty($id)) {
             $this->update($vars, 'WHERE id = ?', $id);

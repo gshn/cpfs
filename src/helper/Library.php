@@ -1,4 +1,15 @@
 <?php
+/**
+ * Library.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 use \DateTime;
@@ -6,7 +17,7 @@ use \DateTime;
 abstract class Library
 {
     /**
-     * @brief 쿠키 네임을 md5로 암호화 해서 생성함
+     * 쿠키 네임을 sha1로 암호화 해서 생성함
      * @param string $name 쿠키 네임
      * @param string $value 값
      * @param string $expire strtotime 형식
@@ -21,7 +32,7 @@ abstract class Library
      */
     public static function setCookie($name, $value, $expire = '+1 month', $path = '/', $domain = DOMAIN, $secure = false, $httponly = false)
     {
-        $name = md5($name);
+        $name = sha1($name);
 
         if ($value === null) {
             unset($_COOKIE[$name]);
@@ -37,7 +48,7 @@ abstract class Library
     }
 
     /**
-     * @brief md5로 암호화 해서 생성된 쿠키 네임의 값을 찾음
+     * sha1로 암호화 해서 생성된 쿠키 네임의 값을 찾음
      * @param string $name 쿠키 네임
      * @return string | null
      * @see controller/User.php
@@ -46,7 +57,7 @@ abstract class Library
      */
     public static function getCookie($name)
     {
-        $name = md5($name);
+        $name = sha1($name);
 
         if (array_key_exists($name, $_COOKIE)) {
             return base64_decode($_COOKIE[$name]);
@@ -56,7 +67,7 @@ abstract class Library
     }
 
     /**
-     * @brief 날짜와 날짜 사이에 있는 모든 날짜를 반환
+     * 날짜와 날짜 사이에 있는 모든 날짜를 반환
      * @param string $first strtotime 형식 시작일
      * @param string $last strtotime 형식 종료일
      * @param string $step strtotime 형식
@@ -80,7 +91,7 @@ abstract class Library
     }
 
     /**
-     * @brief 시간 입력받아 현재로 부터 어떤 시점이었는지 한글로 표현
+     * 시간 입력받아 현재로 부터 어떤 시점이었는지 한글로 표현
      * @param string $datetime
      * @param bool $today
      * @return string
@@ -111,7 +122,7 @@ abstract class Library
     }
 
     /**
-     * @brief 문자열을 원하는 길이만큼 표기하고 뒤는 흐리기 mb_strimwidth 함수 쉽게 래핑
+     * 문자열을 원하는 길이만큼 표기하고 뒤는 흐리기 mb_strimwidth 함수 쉽게 래핑
      * @param string $str
      * @param int $len
      * @param string $suffix
@@ -123,11 +134,11 @@ abstract class Library
     }
 
     /**
-     * @brief GET, POST로 받은 변수 자동으로 filter_var_array적용
+     * GET, POST로 받은 변수 자동으로 filter_var_array적용
      * @param array $filters
      * @return array $vars
      */
-    public static function getVars($filters)
+    public static function vars($filters)
     {
         $args = $vars = [];
 
@@ -140,7 +151,7 @@ abstract class Library
     }
 
     /**
-     * @brief With DateTime you can make the shortest date&time validator for all formats.
+     * With DateTime you can make the shortest date&time validator for all formats.
      * @author glavic@gmail.com
      * @param string $date
      * @param string $format
@@ -154,7 +165,7 @@ abstract class Library
 
 
     /**
-     * @brief 휴대전화 번호 유효성 체크
+     * 휴대전화 번호 유효성 체크
      * @param string $hp
      * @return bool
      */
@@ -164,7 +175,7 @@ abstract class Library
     }
 
     /**
-     * @brief 휴대전화 번호에 하이픈 자동 부여
+     * 휴대전화 번호에 하이픈 자동 부여
      * @param string $hp
      * @return string
      */
@@ -193,7 +204,7 @@ abstract class Library
     public static function checkState($state = null)
     {
         if ($state === null) {
-            $_SESSION['state'] = md5(microtime() . mt_rand());
+            $_SESSION['state'] = sha1(microtime() . mt_rand());
 
             return $_SESSION['state'] ?? false;
         } else {

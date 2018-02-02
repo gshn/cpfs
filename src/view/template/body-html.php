@@ -1,3 +1,16 @@
+<?php
+/**
+ * Template body-html.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <noscript id="deferred-styles">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </noscript>

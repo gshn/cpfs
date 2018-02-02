@@ -1,6 +1,14 @@
 <?php
 /**
- * 디렉터리 상수
+ * Config constant.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Config
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
  */
 define('CTRL_DIR', 'controller');
 define('VIEW_DIR', 'view');
@@ -48,5 +56,5 @@ define('PUT', $_SERVER['REQUEST_METHOD'] === 'PUT');
 define('DELETE', $_SERVER['REQUEST_METHOD'] === 'DELETE');
 define('URI', explode('?', $_SERVER['REQUEST_URI'])[0]);
 define('URIS', array_map('rawurldecode', array_pad(explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]), 5, null)));
-define('MOBILE', preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i',$_SERVER['HTTP_USER_AGENT']));
+define('MOBILE', preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $_SERVER['HTTP_USER_AGENT']));
 define('WINDOWS', preg_match('/windows/i', $_SERVER['HTTP_USER_AGENT']));

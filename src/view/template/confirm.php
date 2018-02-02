@@ -1,4 +1,15 @@
 <?php
+/**
+ * Template confirm.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 define('SWEETALERT', true);
 require VIEW.'/template/html-head.php';
 ob_start();

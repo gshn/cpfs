@@ -1,4 +1,15 @@
 <?php
+/**
+ * Notice.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Controller
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace controller;
 
 use model\NoticeModel;
@@ -6,49 +17,55 @@ use helper\UploadFile;
 use helper\Route;
 use controller\File;
 
+/**
+ * Notice Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 class Notice extends NoticeModel
 {
+    /**
+     * 공지사항 목록
+     * helper\Model
+     * 
+     * @return null|string
+     */
     public function rows()
     {
-        define('NOTICE', TRUE);
-
-        extract(self::getQueryVars());
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
-        $count = $this->getTotalCount();
-        $paging = $this->getPaging();
-        $inputs = $this->getQueryStringInput();
-        $list = $this->getList();
-
-        $cols = [
-            'id' => $this->getOrderBy('#', 'id'),
-            'title' => $this->getOrderBy('제목', 'title'),
-            'datetime' => $this->getOrderBy('등록일시', 'datetime')
+        $template = [
+            'heading' => parent::heading(),
+            'count' => $this->totalCount(),
+            'paging' => $this->paging(),
+            'inputs' => $this->queryStringsInput(),
+            'list' => $this->getList(),
+            'cols' => [
+                'id' => $this->orderBy('#', 'id'),
+                'title' => $this->orderBy('제목', 'title'),
+                'datetime' => $this->orderBy('등록일시', 'datetime')
+            ]
         ];
 
-        Route::template('/template/'.SKIN.'/list', [
-            'table_text' => $table_text,
-            'stx' => $stx,
-            'qstr' => $qstr,
-            'count' => $count,
-            'paging' => $paging,
-            'inputs' => $inputs,
-            'list' => $list,
-            'cols' => $cols
-        ], 'header');
+        return Route::template('/template/'.SKIN.'/list', $template, 'header');
     }
 
-    public function row($id = null)
+    /**
+     * 공지사항 등록 / 수정
+     * ckeditor 모듈
+     * helper\Model
+     * 
+     * @param int $id 글번호
+     * 
+     * @return null|string
+     */
+    public function row($id = null): ?string
     {
-        define('NOTICE', TRUE);
-        define('CKEDITOR', TRUE);
+        define('CKEDITOR', true);
 
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
         $row = $this->getRow('id', $id);
-        $inputs = self::getQueryStringInput();
 
         $cols = [
             '제목' => [
@@ -84,27 +101,38 @@ class Notice extends NoticeModel
             ];
         }
 
-        Route::template('/template/'.SKIN.'/row', [
-            'table_text' => $table_text,
-            'qstr' => $qstr,
+        $template = [
+            'heading' => parent::heading(),
+            'inputs' => parent::queryStringsInput(),
             'row' => $row,
-            'inputs' => $inputs,
             'cols' => $cols
-        ], 'header');
+        ];
+
+        return Route::template('/template/'.SKIN.'/row', $template, 'header');
     }
 
+    /**
+     * 공지사항 업데이트
+     * helper\Model
+     * 
+     * @return void
+     */
     public function rowUpdate()
     {
-        $qstr = self::getQueryString();
-        extract($vars = $this->_getVars([
+        $qstr = parent::queryString();
+        $validateVars = [
             'id' => FILTER_VALIDATE_INT,
             'title' => FILTER_SANITIZE_STRING,
             'content' => FILTER_UNSAFE_RAW
-        ]));
+        ];
+        extract($vars = parent::validateVars($validateVars));
 
         $vars['content'] = $_POST['content'] ?? null;
 
-        $uploadFile = new UploadFile(UPLOAD_PATH.'/notice', UPLOAD.'/notice', $_FILES, ['jpg', 'jpeg', 'gif', 'png']);
+        $uploadFile = new UploadFile(
+            UPLOAD_PATH.'/notice', UPLOAD.'/notice', $_FILES,
+            ['jpg', 'jpeg', 'gif', 'png']
+        );
         $files = $uploadFile->upload();
 
         $file = new File();
@@ -120,9 +148,9 @@ class Notice extends NoticeModel
             $notice->update($vars, 'WHERE id = ?', $id);
         } else {
             $notice->insert($vars);
-            $id = self::$pdo->lastInsertId();
+            $id = parent::$pdo->lastInsertId();
         }
 
-        swal('성공!', '정보를 저장 했습니다.', 'success', '/'.self::$namespace.'/row/'.$id.'?'.$qstr);
+        return Route::location('/'.self::$namespace.'/row/'.$id.'?'.$qstr);
     }
 }

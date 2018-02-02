@@ -1,5 +1,17 @@
+<?php
+/**
+ * Template bootstrap.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <div class="container">
-
     <div class="p-3">
         <h1 class="py-1">weight-400(regular)</h1>
         <h1 class="py-1">h1 2.34375rem 동해물과 백두산이 마르고 닳도록 ABCDEFG abcdefg</h1>

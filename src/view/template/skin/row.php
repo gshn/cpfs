@@ -1,8 +1,21 @@
+<?php
+/**
+ * Skin row.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <main id="container">
-    <section class="container my-3 p-5 bg-white border rounded">
+    <section class="container my-lg-5 my-3 p-lg-5 p-3 bg-white border rounded">
         <hgroup class="clearfix my-3">
             <h4 class="d-inline-block float-left">
-                <?php echo $table_text?> <?php echo !empty($row['id']) ? '수정' : '등록'?>
+                <?php echo $heading?> <?php echo !empty($row['id']) ? '수정' : '등록'?>
             </h4>
         </hgroup>
         <form method="post" enctype="multipart/form-data">

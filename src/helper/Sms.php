@@ -1,4 +1,15 @@
 <?php
+/**
+ * Sms.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 trait Sms
@@ -6,10 +17,10 @@ trait Sms
     private $server_url = 'http://sms.phps.kr/lib/send.sms';
     private $cut = 5000;
     private $params = [
-        'TR_ID' => 'gs126997',
-        'TR_KEY' => 'BTRDA5SG4#',
-        'TR_FROM' => '010-6264-1185',
-        'TR_COMMENT' => '접촉경고',
+        'TR_ID' => '',
+        'TR_KEY' => '',
+        'TR_FROM' => '',
+        'TR_COMMENT' => '',
         'TR_DATE' => 0
     ];
 

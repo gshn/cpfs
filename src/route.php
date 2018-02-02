@@ -1,4 +1,15 @@
 <?php
+/**
+ * Config route.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 use helper\Route;
 use helper\Database;
 use helper\CkeditorUploader;
@@ -43,6 +54,16 @@ if ($is['user']) {
     Route::post('/login', function() {
         $user = new User();
         $user->login();
+    });
+
+    // 회원가입
+    Route::get('/join', function() {
+        User::formJoin();
+    });
+
+    Route::get('/join', function() {
+        $user = new User();
+        $user->join();
     });
 }
 

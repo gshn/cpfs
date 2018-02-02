@@ -1,4 +1,15 @@
 <?php
+/**
+ * FileModel.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace model;
 
 use helper\Model;
@@ -18,9 +29,9 @@ class FileModel extends Model
     public function __construct($table = null)
     {
         parent::__construct($table);
-        extract(self::getQueryVars());
+        extract(self::queryStrings());
 
-        $this->table_text = '파일';
+        $this->heading = '파일';
 
         if (!empty($stx)) {
             $this->where .= " AND (realname LIKE '%{$stx}%' ";

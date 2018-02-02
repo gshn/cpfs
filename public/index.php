@@ -25,16 +25,17 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
- * @package	COZMO PHP Fire Starter (CPFS)
- * @author	COZMO Dev Team (hheo@cozmoworks.com)
- * @copyright Copyright (c) 2018, COZMO, Inc. (http://cozmogames.com)
- * @repository https://github.com/gshn/cpfs
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	http://cozmogames.com
- * @since	Version 1.8
+ * 
+ * PHP Version 7
+ * 
+ * @category  PHP
+ * @package   CPFS
+ * @author    gshn <gs@gs.hn>
+ * @copyright 2018 Copyright (c) COZMO, Inc.
+ * @license   https://opensource.org/licenses/MIT MIT License
+ * @version   GIT: 0.2.0
+ * @link      https://github.com/gshn/cpfs
  */
-//require __DIR__.'/../vendor/autoload.php';
 
 /**
  * 개발모드 관련 상수
@@ -42,14 +43,23 @@
  * DEV 모드일 경우 모든 에러 리포트 및 사용중인 변수들을 앱 하단에 노출
  */
 if ($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
-    define('DEV', TRUE);
+    define('DEV', true);
     error_reporting(-1);
     ini_set('display_errors', 1);
 
 } else {
-    define('DEV', FALSE);
+    define('DEV', false);
     error_reporting(0);
 
+}
+
+/**
+ * 최소 요구 버전 7.0.0
+ */
+if (PHP_VERSION_ID < 70000) {
+    $error = 'The language server needs at least PHP 7.1 installed and in your
+              PATH Version found: ' . PHP_VERSION;
+    exit($error);
 }
 
 /**
@@ -58,9 +68,8 @@ if ($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
  * 전역변수는 $cf 하나만 허용한다.
  */
 if (!file_exists(__DIR__.'/../src/config.php')) {
-    echo 'Change the config.conf file name to config.php.';
-    exit;
+    exit('Change the config.conf file name to config.php');
 }
-$cf = require __DIR__.'/../src/config.php';
+$cf = include __DIR__.'/../src/config.php';
 
 require __DIR__.'/../src/core.php';

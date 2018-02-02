@@ -4,12 +4,13 @@
 log/
 logs/
 uploads/
-vendor/
 .ftpconfig
 .ftpignore
 src/config.php
 .vscode
 *.pem
+composer.phar
+/vendor/
 
 # Created by https://www.gitignore.io/api/macos,windows
 

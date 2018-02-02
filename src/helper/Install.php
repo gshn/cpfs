@@ -1,10 +1,29 @@
 <?php
+/**
+ * Install.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 class Install
 {
     public static $pdo;
 
+    /**
+     * 인스톨 생성자
+     * 회원 테이블 create
+     * 관리자 insert
+     * 공지사항 테이블 create
+     * 파일 테이블 create
+     * @return void
+     */
     public function __construct()
     {
         self::$pdo = new Database();
@@ -12,8 +31,19 @@ class Install
         self::insertUser();
         self::createNoticeTable();
         self::createFileTable();
+
+        return;
     }
 
+    /**
+     * 회원 테이블 생성
+     * @param int $id
+     * @param string $email
+     * @param string $password
+     * @param string timestamp
+     * @param string datetime
+     * @return void
+     */
     private static function createUserTable()
     {
         $sql = "CREATE TABLE `user` (
@@ -35,6 +65,8 @@ class Install
         self::$pdo->query($sql);
 
         echo '회원 테이블을 생성 했습니다.<br>';
+
+        return;
     }
 
     private static function insertUser()

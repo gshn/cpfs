@@ -1,4 +1,15 @@
 <?php
+/**
+ * Database.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Helper
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace helper;
 
 use PDO;
@@ -11,14 +22,13 @@ class Database
     public static $host;
 
     /**
-     * @brief 데이터베이스 커넥터
+     * 데이터베이스 커넥터
      * PDO 연결 방식을 이용한 DB 커넥션을 수행 후 DB 커넥터 객체를 리턴
      * @param string $name 데이터베이스 네임
      * @param string $user 데이터베이스 유저
      * @param string $pass 데이터베이스 패스워드
      * @param string $host 데이터베이스 호스트 서버네임
-     * @return PDO
-     * @see /app/core.php
+     * @return object PDO
      */
     public function __construct($name = null, $user = null, $pass = null, $host = null)
     {
@@ -48,13 +58,12 @@ class Database
     }
 
     /**
-     * @brief SQL Query
+     * SQL Query
      * PDO 연결 방식을 이용한 SQL Query 수행
+     * DEV 모드일 경우 해당 쿼리의 수행 시간을 표시하는 기능이 있음
      * @param string $sql SQL문
      * @param array $params placeholder 매개변수
-     * @return PDOStatement
-     * @see DEV 모드일 경우 해당 쿼리의 수행 시간을 표시하는 기능이 있음
-     * DEV는 config.php에 정의 되어 있음
+     * @return object PDOStatement
      */
     public static function query($sql, $params = null)
     {
@@ -79,6 +88,10 @@ class Database
         return $rst;
     }
 
+    /**
+     * 가장 최근 세션에 auto_increament로 증가한 primary key return
+     * @return int|null
+     */
     public static function lastInsertId()
     {
         return self::$pdo->lastInsertId();

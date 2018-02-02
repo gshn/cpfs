@@ -1,18 +1,40 @@
 <?php
+/**
+ * User.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Controller
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace controller;
 
 use helper\Library;
 use helper\Route;
 use model\UserModel;
 
+/**
+ * User Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 class User extends UserModel
 {
     /**
      * 비밀번호 해시 함수 mysql PASSWORD 함수 이용
-     * @param string password
-     * @return string password 41bytes
+     * 
+     * @param string $password 비밀번호
+     * 
+     * @return string 41bytes
      */
-    private static function _password($password)
+    private static function _password(string $password)
     {
         $sql = 'SELECT PASSWORD(?) AS password';
         $rst = parent::$pdo->query($sql, [$password]);
@@ -23,24 +45,26 @@ class User extends UserModel
 
     /**
      * 자동로그인 해시 함수
-     * @param string password
-     * @return string hash
+     * 
+     * @param string $password 비밀번호
+     * 
+     * @return string
      */
-    private static function _hash($password)
+    private static function _hash(string $password)
     {
-        return md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$password);
+        return sha1($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT'].$password);
     }
 
     /**
      * 자동로그인 setter
      * null일 경우 자동로그인 쿠키를 삭제함
-     * @param array user | null
-     * @return void
+     * 
+     * @param array|null $user 사용자
+     * 
+     * @return bool
      */
     private static function _setAutoLogin($user = null)
     {
-        global $pdo;
-
         if ($user === null) {
             Library::setCookie('id', null);
             Library::setCookie('autoLogin', null);
@@ -49,11 +73,14 @@ class User extends UserModel
             Library::setCookie('id', $user['id']);
             Library::setCookie('autoLogin', $hash);
         }
+
+        return true;
     }
 
     /**
      * 자동로그인 getter
-     * @return array user | null
+     * 
+     * @return array|null
      */
     public function getAutoLogin()
     {
@@ -73,25 +100,37 @@ class User extends UserModel
     }
 
     /**
-     * 로그인
-     * @param string email(필수)
-     * @param string password(필수)
-     * @param bool auto
-     * @param string url
+     * Login
+     * 
+     * @return void
      */
     public function login()
     {
-        extract(parent::_getVars($filters = [
+        /**
+         * POST /login
+         * 
+         * @param string $email    이메일(필수)
+         * @param string $password 비밀번호(필수)
+         * @param bool   $auto     자동로그인
+         * @param string $url      로그인 후 이동할 URL
+         */
+        $validateVars = [
             'email' => FILTER_VALIDATE_EMAIL,
             'password' => FILTER_UNSAFE_RAW,
             'auto' => FILTER_VALIDATE_BOOLEAN,
             'url' => FILTER_VALIDATE_URL
-        ]));
+        ];
+
+        extract(parent::validateVars($validateVars));
 
         $user = $this->getRow('email', $email);
 
-        if (empty($user['id']) || ($user['password'] !== self::_password($password))) {
-            swal('실패!', '가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.', 'warning');
+        if (empty($user['id'])
+            || ($user['password'] !== self::_password($password))
+        ) {
+            $swal = '가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n
+            비밀번호는 대소문자를 구분합니다.';
+            swal('실패!', $swal, 'warning');
         }
 
         $_SESSION['id'] = $user['id'];
@@ -103,12 +142,17 @@ class User extends UserModel
         }
 
         if (empty($url)) {
-            Route::location('/');
+            return Route::location('/');
         } else {
-            Route::location($url);
+            return Route::location($url);
         }
     }
 
+    /**
+     * 로그아웃 모든 세션 파괴 후 자동로그인 쿠키 삭제
+     * 
+     * @return void
+     */
     public static function logout()
     {
         session_unset();
@@ -116,62 +160,72 @@ class User extends UserModel
 
         self::_setAutoLogin(null);
 
-        Route::location('/');
+        return Route::location('/');
     }
 
+    /**
+     * 폼 로그인
+     * 
+     * @return void
+     */
     public static function formLogin()
     {
-        extract(Library::getVars($filters = [
+        /**
+         * GET /login
+         * 
+         * @param string $url 로그인 후 해당 url로 이동
+         */
+        $vars = [
             'url' => FILTER_VALIDATE_URL
-        ]));
-
-        Route::template('/user/login', [
-            'url' => $url ?? null
-        ], 'no-header');
-    }
-
-    public function rows()
-    {
-        define('USER', TRUE);
-
-        extract(self::getQueryVars());
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
-        $count = $this->getTotalCount();
-        $paging = $this->getPaging();
-        $inputs = $this->getQueryStringInput();
-        $list = $this->getList();
-
-        $cols = [
-            'id' => $this->getOrderBy('#', 'id'),
-            'email' => $this->getOrderBy('이메일', 'email'),
-            'timestamp' => $this->getOrderBy('로그인일시', 'timestamp'),
-            'datetime' => $this->getOrderBy('등록일시', 'datetime')
         ];
 
-        Route::template('/template/'.SKIN.'/list', [
-            'table_text' => $table_text,
-            'stx' => $stx,
-            'qstr' => $qstr,
-            'count' => $count,
-            'paging' => $paging,
-            'inputs' => $inputs,
-            'list' => $list,
-            'cols' => $cols
-        ], 'header');
+        extract(Library::vars($vars));
+
+        $template = [
+            'url' => $url ?? null
+        ];
+
+        return Route::template('/user/login', $template, 'no-header');
     }
 
+    /**
+     * 회원 목록
+     * helper\Model
+     * 
+     * @return void
+     */
+    public function rows()
+    {
+        define('USER', true);
+
+        $template = [
+            'heading' => parent::heading(),
+            'count' => $this->totalCount(),
+            'paging' => $this->paging(),
+            'inputs' => $this->queryStringsInput(),
+            'list' => $this->getList(),
+            'cols' => [
+                'id' => $this->orderBy('#', 'id'),
+                'email' => $this->orderBy('이메일', 'email'),
+                'timestamp' => $this->orderBy('로그인일시', 'timestamp'),
+                'datetime' => $this->orderBy('등록일시', 'datetime')
+            ]
+        ];
+
+        return Route::template('/template/'.SKIN.'/list', $template, 'header');
+    }
+
+    /**
+     * 회원 등록 / 수정
+     * helper\Model
+     * 
+     * @param int $id #
+     * 
+     * @return void
+     */
     public function row($id = null)
     {
-        define('USER', TRUE);
-        define('CKEDITOR', TRUE);
-
-        $qstr = self::getQueryString();
-
-        $table_text = $this->table_text ?? ucfirst(self::$namespace);
         $row = $this->getRow('id', $id);
-        $inputs = self::getQueryStringInput();
 
         $cols = [
             '이메일' => [
@@ -208,19 +262,26 @@ class User extends UserModel
             ];
         }
 
-        Route::template('/template/'.SKIN.'/row', [
-            'table_text' => $table_text,
-            'qstr' => $qstr,
+        $template = [
+            'heading' => parent::heading(),
+            'inputs' => parent::queryStringsInput(),
             'row' => $row,
-            'inputs' => $inputs,
             'cols' => $cols
-        ], 'header');
+        ];
+
+        return Route::template('/template/'.SKIN.'/row', $template, 'header');
     }
 
+    /**
+     * 회원 정보 업데이트
+     * helper\Model
+     * 
+     * @return void
+     */
     public function rowUpdate()
     {
-        $qstr = parent::getQueryString();
-        extract($vars = $this->_getVars());
+        $qstr = parent::queryString();
+        extract($vars = parent::validateVars());
 
         if (!empty($password)) {
             $vars['password'] = self::_password($password);

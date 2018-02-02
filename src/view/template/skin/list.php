@@ -1,8 +1,21 @@
+<?php
+/**
+ * Skin list.php
+ * 
+ * PHP Version 7
+ * 
+ * @category View
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+?>
 <main id="container">
-    <section class="container my-3 p-5 bg-white border rounded">
+    <section class="container my-lg-5 my-3 p-lg-5 p-3 bg-white border rounded">
         <hgroup class="clearfix my-3">
             <h4 class="d-inline-block float-left">
-                <?php echo $table_text?>
+                <?php echo $heading?>
             </h4>
             <form class="d-inline-block float-right form-inline">
                 <div class="input-group">

@@ -1,14 +1,18 @@
 <?php
 /**
- * @file /src/core.php
+ * Config core.php
  * 해당 프레임웍이 실행될 때 마다 수행하는 코어 스크립트
- * 데이터 베이스 연결, 기본 설정 fetch, 세션 세팅, 검색관련 전역 변수 인젝션 방지
+ * Autoloader PSR-4
  * 세션 초기화 및 세션 기본 설정
- * 로그인시 해야하는 기본 동작, 자동로그인 처리, 회원 비회원 구분 처리
  * HTTP 캐시 해더 설정을 처리함
- * @see /src/config.php 전역 상수, 전역 변수
- * @see /src/lib.php 공통 함수
- * @see /src/route.php URI 라우트 설정
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
  */
 
 /**
@@ -28,36 +32,39 @@ require PATH.'/lib.php';
  *      new \Foo\Bar\Baz\Qux;
  *
  * @param string $class The fully-qualified class name.
+ * 
  * @return void
  */
-spl_autoload_register(function ($class) {
+spl_autoload_register(
+    function ($class) {
 
-    // project-specific namespace prefix
-    $prefix = '';
+        // project-specific namespace prefix
+        $prefix = '';
 
-    // base directory for the namespace prefix
-    $base_dir = PATH . '/';
+        // base directory for the namespace prefix
+        $base_dir = PATH . '/';
 
-    // does the class use the namespace prefix?
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        // no, move to the next registered autoloader
-        return;
+        // does the class use the namespace prefix?
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            // no, move to the next registered autoloader
+            return;
+        }
+
+        // get the relative class name
+        $relative_class = substr($class, $len);
+
+        // replace the namespace prefix with the base directory, replace namespace
+        // separators with directory separators in the relative class name, append
+        // with .php
+        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+        // if the file exists, require it
+        if (file_exists($file)) {
+            include $file;
+        }
     }
-
-    // get the relative class name
-    $relative_class = substr($class, $len);
-
-    // replace the namespace prefix with the base directory, replace namespace
-    // separators with directory separators in the relative class name, append
-    // with .php
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-    // if the file exists, require it
-    if (file_exists($file)) {
-        require $file;
-    }
-});
+);
 
 /**
  * 세션 관련 설정
@@ -72,7 +79,7 @@ session_start();
 
 /**
  * 자바스크립트에서 go(-1) 함수를 쓰면 폼값이 사라질때 해당 폼의 상단에 사용하면
- * 캐쉬의 내용을 가져옴. 브라우저 별로 모두 완전한지는 검증되지 않음
+ * 캐쉬의 내용을 가져옴. 익스에서 지원하지 않음.
  */
 header('Expires: 0');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');

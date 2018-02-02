@@ -1,7 +1,19 @@
 <?php
 /**
+ * Config lib.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
+
+/**
  * @file lib.php
- * @brief UNIX 타임스템프를 가져와서 밀리초를 얻음
+ * UNIX 타임스템프를 가져와서 밀리초를 얻음
  * @return float
  * @see DEV 모드
  */
@@ -11,7 +23,7 @@ function microtime_float()
 }
 
 /**
- * @brief print_r 내장함수를 보기 편리하도록 치환
+ * print_r 내장함수를 보기 편리하도록 치환
  * @param mixed $var 표기할 객체
  * @see print_r()
  */
@@ -25,7 +37,7 @@ function printr($var)
 }
 
 /**
- * @brief var_dump 내장함수를 보기 편리하도록 치환
+ * var_dump 내장함수를 보기 편리하도록 치환
  * @param mixed $var 표기할 객체
  * @see var_dump()
  */
@@ -39,7 +51,7 @@ function vardump($var)
 }
 
 /**
- * @brief sweetalert을 이용한 클라이언트 측 경고창
+ * sweetalert을 이용한 클라이언트 측 경고창
  * @param string $type primary, info, success, warning, danger 타입별 스타일
  * @param string $title 경고 타이틀
  * @param string $text 경고할 내용

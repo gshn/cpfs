@@ -1,4 +1,15 @@
 <?php
+/**
+ * UserModel.php
+ * 
+ * PHP Version 7
+ * 
+ * @category Model
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 namespace model;
 
 use helper\Model;
@@ -14,9 +25,9 @@ class UserModel extends Model
     public function __construct($table = null)
     {
         parent::__construct($table);
-        extract(parent::getQueryVars());
+        extract(parent::queryStrings());
 
-        $this->table_text = '회원';
+        $this->heading = '회원';
 
         if (!empty($stx)) {
             $this->where .= " AND (email LIKE '%{$stx}%' ";
