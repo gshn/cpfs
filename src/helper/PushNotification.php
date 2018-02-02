@@ -6,55 +6,40 @@ namespace helper;
  * PushNotification::android($data, $ids, $type);
  * PushNotification::ios($data, $ids);
  */
-class PushNotification
+trait PushNotification
 {
+    // Google Firebase API KEY
+    public static $FIREBASE_KEY = 'AIzaSyBLq6WFShoUwRGD9AyPdubNnCv41IL-QVg';
+
     // Android API access key from Google API's Console.
-    private static $GCM_API_ACCESS_KEY = 'AIzaSyDv9fm93XeeH2pxfl4GMzjBXokAo13WnYw';
-    private static $FCM_API_ACCESS_KEY = 'AIzaSyDv9fm93XeeH2pxfl4GMzjBXokAo13WnYw';
+    public static $GCM_KEY = 'AIzaSyDv9fm93XeeH2pxfl4GMzjBXokAo13WnYw';
 
     // iOS pem file, Private key's passphrase.
-    private static $PEM = 'ck.pem';
-    private static $PASSPHRASE = '1231';
+    public static $PEM = HELPER.'/ck.pem';
+    public static $PASSPHRASE = '1231';
 
     /**
-     * android 유저에게 푸시를 전송
-     * 포트 443 outbound 오픈 필요
-     * @param array $data [title, body]
-     * @param array|string $ids
-     * @param string $type gcm|fcm
-     * @return array $result
+     * postfields JSON 코드 변환
+     * @param array $array
+     * @return string $jsonstring
      */
-    public static function android($data, $ids, $type = 'gcm')
+    private static function postfields($array)
     {
-        if ($type === 'fcm') {
-            $url = 'https://fcm.googleapis.com/fcm/send';
-            $API_ACCESS_KEY = self::$FCM_API_ACCESS_KEY;
-            $recipientKey = is_string($ids) ? 'to' : 'registration_ids';
-        } else {
-            $url = 'https://android.googleapis.com/gcm/send';
-            $API_ACCESS_KEY = self::$GCM_API_ACCESS_KEY;
-            $recipientKey = 'registration_ids';
-            $ids = is_string($ids) ? (array)$ids : $ids;
-        }
+        return json_encode($array, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+    }
 
-        $fields = [
-            $recipientKey => $ids,
-            'data' => [
-                'alert' => $data
-            ]
-        ];
-
-        $postfields = json_encode($fields, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
-
-        $headers = [
-            'Content-Type: application/json',
-            'Authorization: key='.$API_ACCESS_KEY
-        ];
-
+    /**
+     * curl send
+     * @param string $url
+     * @param array $header
+     * @param string $postfields
+     */
+    private static function send($url, $header, $postfields)
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
@@ -70,16 +55,86 @@ class PushNotification
     }
 
     /**
+     * Google Firebase 이용 푸시 전송
+     * 안드로이드 아이폰 둘 다 대응 함
+     * @param array|string $ids
+     * @param array $alert [title, body]
+     * @param array|null $callback
+     * @return array $result
+     */
+    public static function firebase($ids, $alert, $callback = null)
+    {
+        $url = 'https://fcm.googleapis.com/fcm/send';
+
+        $header = [
+            'Content-Type: application/json',
+            'Authorization: key='.self::$FIREBASE_KEY
+        ];
+
+        if (is_array($ids)) {
+            $recipientKey = 'registration_ids';
+        } else {
+            $recipientKey = 'to';
+            $ids = (string)$ids;
+        }
+
+        $postfields = self::postfields([
+            $recipientKey => $ids,
+            'data' => [
+                'alert' => $alert,
+                'callback' => $callback
+            ]
+        ]);
+
+        return self::send($url, $header, $postfields);
+    }
+
+    /**
+     * android 유저에게 푸시를 전송
+     * 포트 443 outbound 오픈 필요
+     * @param array|string $ids
+     * @param array $alert [title, body]
+     * @param array|null $callback
+     * @return array $result
+     */
+    public static function android($ids, $alert, $callback = null)
+    {
+        $url = 'https://android.googleapis.com/gcm/send';
+
+        $header = [
+            'Content-Type: application/json',
+            'Authorization: key='.self::$GCM_KEY
+        ];
+
+        $ids = is_array($ids) ? (string)$ids : (array)$ids;
+
+        $postfields = self::postfields([
+            'registration_ids' => $ids,
+            'data' => [
+                'alert' => $alert,
+                'callback' => $callback
+            ]
+        ]);
+
+        return self::send($url, $header, $postfields);
+    }
+
+    /**
      * iOS 유저에게 푸시를 전송
      * ck.pem 인증서 파일 필요
      * 포트 2195 outbound 오픈 필요
-     * @param array $data [title, message]
      * @param string $token
+     * @param array $alert [title, body]
+     * @param array|null $callback
      * @return string $result
      */
-    public static function ios($data, $token)
+    public static function ios($token, $alert, $callback = null)
     {
-        $url = 'ssl://gateway.sandbox.push.apple.com:2195';
+        if (DEV) {
+            $url = 'ssl://gateway.sandbox.push.apple.com:2195';
+        } else {
+            $url = 'ssl://gateway.push.apple.com:2195';
+        }
 
         $ctx = stream_context_create();
 
@@ -96,8 +151,9 @@ class PushNotification
         }
 
         $body['aps'] = [
-            'alert' => $data,
-            'sound' => 'default',
+            'alert' => $alert,
+            'callback' => $callback,
+            'sound' => 'default'
         ];
         $payload = json_encode($body);
 

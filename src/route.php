@@ -95,22 +95,6 @@ Route::get('/install', function() {
     $install = new Install();
 });
 
-Route::get('/push/android', function() {
-    $rst = PushNotification::android([
-        'title' => '타이틀타이틀타이틀타이틀타이틀타이틀타이틀타이틀',
-        'body' => '테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지'
-    ], 'APA91bG_aFazHxRLIoCUz8nyQzFrAWBBinNeE6gs4jQYOpymoiUowfcAlqnO3EpvKdOkW5QpTx745CgeUxZJGXydg8TAk64yiFR7lHkefo15A9lz_7VY99APS-qvrTy3-zTBWGRl40-y');
-    printr($rst);
-});
-
-Route::get('/push/ios', function() {
-    $rst = PushNotification::ios([
-        'title' => '타이틀타이틀타이틀타이틀타이틀타이틀타이틀타이틀',
-        'body' => '테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지 테스트 메시지'
-    ], '8c817c0883e30f2f6cdf1018694a75be3952449e65375ed38366b0b4c1a3a668');
-    printr($rst);
-});
-
 Route::get('/', function($req, $res) {
     Route::main();
 });
