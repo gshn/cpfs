@@ -9,6 +9,7 @@ vendor/
 .ftpignore
 src/config.php
 .vscode
+*.pem
 
 # Created by https://www.gitignore.io/api/macos,windows
 
