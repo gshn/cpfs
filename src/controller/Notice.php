@@ -61,7 +61,7 @@ class Notice extends NoticeModel
      * 
      * @return null|string
      */
-    public function row($id = null): ?string
+    public function row($id = null)
     {
         define('CKEDITOR', true);
 
