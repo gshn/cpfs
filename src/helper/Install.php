@@ -12,6 +12,15 @@
  */
 namespace helper;
 
+/**
+ * Install Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 class Install
 {
     public static $pdo;
@@ -22,36 +31,38 @@ class Install
      * 관리자 insert
      * 공지사항 테이블 create
      * 파일 테이블 create
-     * @return void
+     *
+     * @return null
      */
     public function __construct()
     {
         self::$pdo = new Database();
-        self::createUserTable();
-        self::insertUser();
-        self::createNoticeTable();
-        self::createFileTable();
+        self::_createUserTable();
+        self::_insertUser();
+        self::_createNoticeTable();
+        self::_createFileTable();
 
-        return;
+        return null;
     }
 
     /**
-     * 회원 테이블 생성
-     * @param int $id
-     * @param string $email
-     * @param string $password
-     * @param string timestamp
-     * @param string datetime
-     * @return void
+     * Function _createUserTable
+     * 
+     * @return null
      */
-    private static function createUserTable()
+    private static function _createUserTable()
     {
         $sql = "CREATE TABLE `user` (
                 `id` int(10) UNSIGNED NOT NULL COMMENT '#',
-                `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '이메일',
-                `password` varchar(41) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '비밀번호',
-                `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT '로그인일시',
-                `datetime` datetime NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
+                `email` varchar(100) COLLATE utf8mb4_unicode_ci
+                    NOT NULL COMMENT '이메일',
+                `password` varchar(41) COLLATE utf8mb4_unicode_ci
+                    NOT NULL COMMENT '비밀번호',
+                `timestamp` timestamp
+                    NOT NULL DEFAULT current_timestamp()
+                    ON UPDATE current_timestamp() COMMENT '로그인일시',
+                `datetime` datetime
+                    NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         self::$pdo->query($sql);
 
@@ -61,34 +72,55 @@ class Install
         self::$pdo->query($sql);
 
         $sql = "ALTER TABLE `user`
-                MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '#'";
+                MODIFY `id` int(10) UNSIGNED
+                    NOT NULL AUTO_INCREMENT COMMENT '#'";
         self::$pdo->query($sql);
 
         echo '회원 테이블을 생성 했습니다.<br>';
 
-        return;
+        return null;
     }
 
-    private static function insertUser()
+    /**
+     * Function _insertUser
+     * 
+     * @return null
+     */
+    private static function _insertUser()
     {
         $sql = "INSERT INTO user
                 SET email = ?,
                     password = PASSWORD(?)";
-        self::$pdo->query($sql, [
+
+        $insert = [
             'super@czm.kr', '1234'
-        ]);
+        ];
+
+        self::$pdo->query($sql, $insert);
 
         echo 'super@czm.kr / 1231 사용자 등록.<br>';
+
+        return null;
     }
 
-    private static function createNoticeTable()
+    /**
+     * Function _createNoticeTable
+     * 
+     * @return null
+     */
+    private static function _createNoticeTable()
     {
         $sql = "CREATE TABLE `notice` (
-                `id` int(10) UNSIGNED NOT NULL COMMENT '#',
-                `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '제목',
-                `content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '내용',
-                `file_url` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '파일URL',
-                `datetime` timestamp NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
+                `id` int(10) UNSIGNED
+                    NOT NULL COMMENT '#',
+                `title` varchar(100) COLLATE utf8mb4_unicode_ci
+                    NOT NULL COMMENT '제목',
+                `content` text COLLATE utf8mb4_unicode_ci
+                    NOT NULL COMMENT '내용',
+                `file_url` varchar(200) COLLATE utf8mb4_unicode_ci
+                    NOT NULL COMMENT '파일URL',
+                `datetime` timestamp
+                    NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         self::$pdo->query($sql);
 
@@ -101,9 +133,16 @@ class Install
         self::$pdo->query($sql);
 
         echo '공지사항 테이블을 생성 했습니다.<br>';
+
+        return null;
     }
 
-    private static function createFileTable()
+    /**
+     * Function _createFileTable
+     * 
+     * @return null
+     */
+    private static function _createFileTable()
     {
         $sql = "CREATE TABLE `file` (
                 `id` int(10) UNSIGNED NOT NULL COMMENT '#',
@@ -114,7 +153,8 @@ class Install
                 `path` varchar(255) NOT NULL COMMENT '경로',
                 `url` varchar(255) NOT NULL COMMENT 'URL',
                 `type` varchar(30) NOT NULL COMMENT '타입',
-                `datetime` timestamp NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
+                `datetime` timestamp
+                    NOT NULL DEFAULT current_timestamp() COMMENT '등록일시'
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         self::$pdo->query($sql);
 

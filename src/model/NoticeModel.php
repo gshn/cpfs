@@ -14,6 +14,15 @@ namespace model;
 
 use helper\Model;
 
+/**
+ * NoticeModel
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 class NoticeModel extends Model
 {
     protected $id;
@@ -22,6 +31,13 @@ class NoticeModel extends Model
     protected $file_url;
     protected $datetime;
 
+    /**
+     * Function __construct
+     * 
+     * @param string $table 태이블명
+     * 
+     * @return null
+     */
     public function __construct($table =  null)
     {
         parent::__construct($table);
@@ -40,5 +56,7 @@ class NoticeModel extends Model
         } else {
             $this->order = "ORDER BY id DESC";
         }
+
+        return null;
     }
 }

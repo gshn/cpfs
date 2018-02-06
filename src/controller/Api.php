@@ -78,7 +78,7 @@ final class Api
     private function _notice()
     {
         $notice = new Notice();
-        $list = $notice->getList();
+        $list = $notice->getRows();
 
         return Route::api(true, $list);
     }

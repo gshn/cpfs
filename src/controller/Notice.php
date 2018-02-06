@@ -41,7 +41,7 @@ class Notice extends NoticeModel
             'count' => $this->totalCount(),
             'paging' => $this->paging(),
             'inputs' => $this->queryStringsInput(),
-            'list' => $this->getList(),
+            'list' => $this->getRows(),
             'cols' => [
                 'id' => $this->orderBy('#', 'id'),
                 'title' => $this->orderBy('제목', 'title'),

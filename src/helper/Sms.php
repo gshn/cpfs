@@ -12,11 +12,21 @@
  */
 namespace helper;
 
+/**
+ * SMS 전송 클래스
+ * phps 모듈 적용
+ * 
+ * @category Trait
+ * @package  PHPS
+ * @author   www.phps.kr <helpcenter@phps.kr>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://www.phps.kr/smshosting_manual.html
+ */
 trait Sms
 {
-    private $server_url = 'http://sms.phps.kr/lib/send.sms';
-    private $cut = 5000;
-    private $params = [
+    private static $_server_url = 'http://sms.phps.kr/lib/send.sms';
+    private static $_cut = 5000;
+    private $_params = [
         'TR_ID' => '',
         'TR_KEY' => '',
         'TR_FROM' => '',
@@ -24,34 +34,44 @@ trait Sms
         'TR_DATE' => 0
     ];
 
-    protected $curcount = 0;
-
-    public function get()
-    {
-        return $this->params;
-    }
-
+    /**
+     * Set
+     * 
+     * @param string $key  key
+     * @param string $val1 val1
+     * @param string $val2 val2
+     * @param string $val3 val3
+     * 
+     * @return bool
+     */
     public function set($key = '', $val1 = '', $val2 = '',$val3 = '')
     {
         if ($key === 'TR_TO' && $val1 !== '') {
-            $this->params['TR_TO'][$val1] = [
+            $this->_params['TR_TO'][$val1] = [
                 'name' => $val2,
                 'name2' => $val3
             ];
         } else {
             if (empty($val1)) {
-                unset($this->params[$key]);
+                unset($this->_params[$key]);
             } else {
-                $this->params[$key] = $val1;
+                $this->_params[$key] = $val1;
             }
         }
         return true;
     }
 
+    /**
+     * SendCount
+     * 
+     * @param array|null $params params
+     * 
+     * @return string
+     */
     public function sendCount($params = null)
     {
         if ($params === null) {
-            $params = $this->params;
+            $params = $this->_params;
         }
 
         $post = [
@@ -60,15 +80,22 @@ trait Sms
             'type' => 'view'
         ];
 
-        $return = $this->curl_send($post);
+        $return = $this->_curlSend($post);
 
         return $return;
     }
 
+    /**
+     * Cancel
+     * 
+     * @param array|null $params params
+     * 
+     * @return string
+     */
     public function cancel($params = null)
     {
         if ($params === null) {
-            $params = $this->params;
+            $params = $this->_params;
         }
 
         $post = [
@@ -78,14 +105,22 @@ trait Sms
             'tr_num' => $params['TR_NUM']
         ];
 
-        $return = $this->curl_send($post);
+        $return = $this->_curlSend($post);
 
         return $return;
     }
 
-    public function send($params = null) {
+    /**
+     * Send
+     * 
+     * @param array|null $params params
+     * 
+     * @return string
+     */
+    public function send($params = null)
+    {
         if ($params === null) {
-            $params = $this->params;
+            $params = $this->_params;
         }
 
         if (empty($params['TR_TXTMSG'])) {
@@ -115,21 +150,29 @@ trait Sms
         $cnt = 1;
         $index = 0;
         $group = [];
-        $group[$index]['phone'] = $group[$index]['name'] = $group[$index]['name2'] = '';
+        $group[$index]['phone'] = '';
+        $group[$index]['name'] = '';
+        $group[$index]['name2'] = '';
 
         foreach ($params['TR_TO'] as $key => $val) {
             $group[$index]['phone'] .= preg_replace('/[^0-9]/', '', $key).',';
             $group[$index]['name'] .= preg_replace('/[,]/', '', $val['name']).',';
             $group[$index]['name2'] .= preg_replace('/[,]/', '', $val['name2']).',';
-            if ($cnt % $this->cut == 0) {
+            if ($cnt % self::$_cut == 0) {
                 $index += 1;
-                $group[$index]['phone'] = $group[$index]['name']  = $group[$index]['name2'] = '';
+                $group[$index]['phone'] = '';
+                $group[$index]['name']  = '';
+                $group[$index]['name2'] = '';
             }
             $cnt += 1;
         }
 
-        $params['TR_COMMENT'] = mb_convert_encoding($params['TR_COMMENT'], 'EUC-KR', 'UTF-8');
-        $params['TR_TXTMSG'] = mb_convert_encoding($params['TR_TXTMSG'], 'EUC-KR', 'UTF-8');
+        $params['TR_COMMENT'] = mb_convert_encoding(
+            $params['TR_COMMENT'], 'EUC-KR', 'UTF-8'
+        );
+        $params['TR_TXTMSG'] = mb_convert_encoding(
+            $params['TR_TXTMSG'], 'EUC-KR', 'UTF-8'
+        );
 
         foreach ($group as $key => $pdata) {
             $phone = preg_replace('/,$/', '', $pdata['phone']);
@@ -152,15 +195,23 @@ trait Sms
                 'ip' => getenv('REMOTE_ADDR')
             ];
 
-            $return[] = $this->curl_send($post);
+            $return[] = $this->_curlSend($post);
         }
 
-        unset($this->params);
+        unset($this->_params);
         return $return;
     }
 
-    private function curl_send($post = []) {
-        $CURL = curl_init($this->server_url);
+    /**
+     * CRUL
+     * 
+     * @param array $post post
+     * 
+     * @return string
+     */
+    private function _curlSend($post = [])
+    {
+        $CURL = curl_init(self::$_server_url);
         curl_setopt($CURL, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($CURL, CURLOPT_HEADER, false);
         curl_setopt($CURL, CURLOPT_FOLLOWLOCATION, true);

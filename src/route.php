@@ -4,7 +4,7 @@
  * 
  * PHP Version 7
  * 
- * @category Model
+ * @category Route
  * @package  CPFS
  * @author   gshn <gs@gs.hn>
  * @license  https://opensource.org/licenses/MIT MIT License

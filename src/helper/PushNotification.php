@@ -14,8 +14,15 @@ namespace helper;
 
 /**
  * Android, iOS 푸시 전송 클래스
+ * PushNotification::firebase($data, $ids, $type);
  * PushNotification::android($data, $ids, $type);
  * PushNotification::ios($data, $ids);
+ * 
+ * @category Trait
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
  */
 trait PushNotification
 {
@@ -30,22 +37,30 @@ trait PushNotification
     public static $PASSPHRASE = '1231';
 
     /**
-     * postfields JSON 코드 변환
-     * @param array $array
+     * Postfields JSON 코드 변환
+     * 
+     * @param array $array postfileds
+     * 
      * @return string $jsonstring
      */
-    private static function postfields($array)
+    private static function _postfields($array)
     {
-        return json_encode($array, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+        return json_encode(
+            $array, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT |
+            JSON_HEX_AMP | JSON_UNESCAPED_UNICODE
+        );
     }
 
     /**
-     * curl send
-     * @param string $url
-     * @param array $header
-     * @param string $postfields
+     * Curl send
+     * 
+     * @param string $url        전송URL
+     * @param array  $header     전송해더
+     * @param string $postfields 전송값
+     * 
+     * @return mixed
      */
-    private static function send($url, $header, $postfields)
+    private static function _send($url, $header, $postfields)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -56,7 +71,7 @@ trait PushNotification
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
         $result = json_decode(curl_exec($ch));
 
-        if ($result === FALSE) {
+        if ($result === false) {
             return curl_error($ch);
         }
 
@@ -68,9 +83,11 @@ trait PushNotification
     /**
      * Google Firebase 이용 푸시 전송
      * 안드로이드 아이폰 둘 다 대응 함
-     * @param array|string $ids
-     * @param array $alert [title, body]
-     * @param array|null $callback
+     * 
+     * @param array|string $ids      push tokens
+     * @param array        $alert    [title, body]
+     * @param array|null   $callback push 후 콜백
+     * 
      * @return array $result
      */
     public static function firebase($ids, $alert, $callback = null)
@@ -89,23 +106,27 @@ trait PushNotification
             $ids = (string)$ids;
         }
 
-        $postfields = self::postfields([
+        $fields = [
             $recipientKey => $ids,
             'data' => [
                 'alert' => $alert,
                 'callback' => $callback
             ]
-        ]);
+        ];
 
-        return self::send($url, $header, $postfields);
+        $postfields = self::_postfields($fields);
+
+        return self::_send($url, $header, $postfields);
     }
 
     /**
-     * android 유저에게 푸시를 전송
+     * Android 유저에게 푸시를 전송
      * 포트 443 outbound 오픈 필요
-     * @param array|string $ids
-     * @param array $alert [title, body]
-     * @param array|null $callback
+     * 
+     * @param array|string $ids      push tokens
+     * @param array        $alert    [title, body]
+     * @param array|null   $callback push 후 콜백
+     * 
      * @return array $result
      */
     public static function android($ids, $alert, $callback = null)
@@ -119,24 +140,28 @@ trait PushNotification
 
         $ids = is_array($ids) ? (string)$ids : (array)$ids;
 
-        $postfields = self::postfields([
+        $fields = [
             'registration_ids' => $ids,
             'data' => [
                 'alert' => $alert,
                 'callback' => $callback
             ]
-        ]);
+        ];
 
-        return self::send($url, $header, $postfields);
+        $postfields = self::_postfields($fields);
+
+        return self::_send($url, $header, $postfields);
     }
 
     /**
-     * iOS 유저에게 푸시를 전송
+     * 아이폰 유저에게 푸시를 전송
      * ck.pem 인증서 파일 필요
      * 포트 2195 outbound 오픈 필요
-     * @param string $token
-     * @param array $alert [title, body]
-     * @param array|null $callback
+     * 
+     * @param string     $token    push token
+     * @param array      $alert    [title, body]
+     * @param array|null $callback push 후 콜백
+     * 
      * @return string $result
      */
     public static function ios($token, $alert, $callback = null)
@@ -168,7 +193,8 @@ trait PushNotification
         ];
         $payload = json_encode($body);
 
-        $msg = chr(0) . pack('n', 32) . pack('H*', $token) . pack('n', strlen($payload)) . $payload;
+        $msg = chr(0).pack('n', 32).pack('H*', $token).
+            pack('n', strlen($payload)).$payload;
         $result = fwrite($fp, $msg, strlen($msg));
         fclose($fp);
 

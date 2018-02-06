@@ -12,6 +12,15 @@
  */
 namespace helper;
 
+/**
+ * UploadFile Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 class UploadFile
 {
     public static $files;
@@ -19,8 +28,20 @@ class UploadFile
     public static $path;
     public static $url;
 
-    public function __construct($path = null, $url = null, $files = null, $allowedExtension = ['jpg', 'jpeg', 'gif', 'png'])
-    {
+    /**
+     * Function __construct
+     * 
+     * @param string $path             업로드 경로
+     * @param string $url              업로드 URL
+     * @param array  $files            업로드 파일셋
+     * @param array  $allowedExtension 허용 확장자
+     * 
+     * @return null
+     */
+    public function __construct(
+        $path = null, $url = null, $files = null,
+        $allowedExtension = ['jpg', 'jpeg', 'gif', 'png']
+    ) {
         if ($path === null) {
             self::$path = UPLOAD_PATH;
         } else {
@@ -42,8 +63,17 @@ class UploadFile
         self::$allowedExtension = $allowedExtension;
 
         @mkdir(self::$path, 0755);
+
+        return null;
     }
 
+    /**
+     * 확장자 검사
+     * 
+     * @param string $name 파일명
+     * 
+     * @return bool
+     */
     public static function checkExtension($name)
     {
         $names = explode('.', $name);
@@ -53,13 +83,20 @@ class UploadFile
             return '허용되지 않는 확장자 입니다.';
         }
 
-        return TRUE;
+        return true;
     }
 
+    /**
+     * 업로드 에러 체크
+     * 
+     * @param int $error 에러
+     * 
+     * @return bool
+     */
     public static function checkError($error)
     {
         if ($error === UPLOAD_ERR_OK) {
-            return TRUE;
+            return true;
         }
 
         switch ($error) {
@@ -92,7 +129,9 @@ class UploadFile
 
     /**
      * 파일명에 특수 문자 제거
-     * @param string $name
+     * 
+     * @param string $name 파일명
+     * 
      * @return string
      */
     public static function getFilename($name)
@@ -102,7 +141,9 @@ class UploadFile
 
     /**
      * 파일사이즈 문자열로 얻기
-     * @param int $size
+     * 
+     * @param int $size 파일 사이즈
+     * 
      * @return string
      */
     public static function readSize($size)
@@ -125,17 +166,29 @@ class UploadFile
         }
     }
 
-    // 파일명에서 특수문자 제거
+    /**
+     * 파일 특수문자 제거
+     * 
+     * @param string $name 파일명
+     * 
+     * @return string
+     */
     public static function safeName($name)
     {
-        if (mb_detect_encoding($name, 'UTF-8', TRUE) === false) {
+        if (mb_detect_encoding($name, 'UTF-8', true) === false) {
             $name = utf8_encode($name);
         }
 
         return preg_replace('/["\'<>=#&!%\\\\(\)\*\+\?]/', '', $name);
     }
 
-    // 파일명 치환
+    /**
+     * 유니크한 파일명으로 치환
+     * 
+     * @param string $name 파일명
+     * 
+     * @return string
+     */
     public static function uniqueName($name)
     {
         $uniqid = uniqid();
@@ -150,6 +203,11 @@ class UploadFile
         return $uniquename;
     }
 
+    /**
+     * 업로드
+     * 
+     * @return array
+     */
     public function upload()
     {
         if (self::$files === null) {
@@ -171,7 +229,7 @@ class UploadFile
                 $list[$i]['key'] = $key;
 
                 $msg = self::checkError($error);
-                if ($msg !== TRUE) {
+                if ($msg !== true) {
                     $list[$i]['error'] = $msg;
                     $i += 1;
                     continue;
@@ -179,7 +237,7 @@ class UploadFile
 
                 $realname = self::safeName($file['name'][$index]);
                 $msg = self::checkExtension($realname);
-                if ($msg !== TRUE) {
+                if ($msg !== true) {
                     $list[$i]['error'] = $msg;
                     $i += 1;
                     continue;

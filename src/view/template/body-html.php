@@ -15,17 +15,21 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </noscript>
 <?php
-echo js_css([
-    '/js/jquery-3.2.1/jquery.min.js',
-    '/js/jquery-3.2.1/jquery.easing.min.js',
-    '/js/bootstrap-4.0.0/js/bootstrap.min.js',
-    '/js/sweetalert-1.1.3/sweetalert.min.js',
-    '/js/sweetalert-1.1.3/sweetalert.min.css'
-]);
+echo js_css(
+    [
+        '/js/jquery-3.2.1/jquery.min.js',
+        '/js/jquery-3.2.1/jquery.easing.min.js',
+        '/js/bootstrap-4.0.0/js/bootstrap.min.js',
+        '/js/sweetalert-1.1.3/sweetalert.min.js',
+        '/js/sweetalert-1.1.3/sweetalert.min.css'
+    ]
+);
 
-echo defined('CKEDITOR') ? js_css([
-    '/js/ckeditor-4.8/ckeditor.js'
-]) : '';
+echo defined('CKEDITOR') ? js_css(
+    [
+        '/js/ckeditor-4.8/ckeditor.js'
+    ]
+) : '';
 
 echo js_css('/js/app.js');
 
@@ -62,7 +66,8 @@ if (DEV) {
     echo $cf['debug']['query_log'].PHP_EOL;
     echo 'Total SQL Query Time '.round($cf['debug']['query_time'], 4).PHP_EOL;
 
-    echo 'Page rendered in '.round(microtime_float() - $_SERVER['REQUEST_TIME_FLOAT'], 4).PHP_EOL;
+    echo 'Page rendered in '.
+        round(microtime_float() - $_SERVER['REQUEST_TIME_FLOAT'], 4).PHP_EOL;
     echo '</div>';
 }
 ?>

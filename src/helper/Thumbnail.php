@@ -12,6 +12,17 @@
  */
 namespace helper;
 
+/**
+ * Thumbnail 생성 trait
+ * GNUBOARD5 함수
+ * 
+ * @category Trait
+ * @package  GNUBOARD
+ * @author   kagla <kagla@naver.com>
+ * @license  https://github.com/gnuboard/gnuboard5/blob/master/LICENSE.txt 
+             LGPL License
+ * @link     https://github.com/gnuboard/gnuboard5
+ */
 trait Thumbnail
 {
     public static function thumbnail($filename, $source_path, $target_path, $thumb_width, $thumb_height, $is_create, $is_crop=false, $crop_mode='center', $is_sharpen=false, $um_value='80/0.5/3')

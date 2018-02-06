@@ -203,7 +203,7 @@ class User extends UserModel
             'count' => $this->totalCount(),
             'paging' => $this->paging(),
             'inputs' => $this->queryStringsInput(),
-            'list' => $this->getList(),
+            'list' => $this->getRows(),
             'cols' => [
                 'id' => $this->orderBy('#', 'id'),
                 'email' => $this->orderBy('이메일', 'email'),

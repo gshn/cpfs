@@ -14,24 +14,34 @@ namespace helper;
 
 use \DateTime;
 
+/**
+ * Library Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ */
 abstract class Library
 {
     /**
      * 쿠키 네임을 sha1로 암호화 해서 생성함
-     * @param string $name 쿠키 네임
-     * @param string $value 값
-     * @param string $expire strtotime 형식
-     * @param string $path 페이지 경로
-     * @param string $domain 도메인
-     * @param bool $secure HTTPS 연결이라면 true
-     * @param bool $httponly http 접속 이외에 접근 불가 쿠키
+     * 
+     * @param string $name     쿠키 네임
+     * @param string $value    값
+     * @param string $expire   strtotime 형식
+     * @param string $path     페이지 경로
+     * @param string $domain   도메인
+     * @param bool   $secure   HTTPS 연결이라면 true
+     * @param bool   $httponly http 접속 이외에 접근 불가 쿠키
+     * 
      * @return bool
-     * @see controller/User.php
-     * @see /app/core.php
-     * @see setcookie()
      */
-    public static function setCookie($name, $value, $expire = '+1 month', $path = '/', $domain = DOMAIN, $secure = false, $httponly = false)
-    {
+    public static function setCookie(
+        $name, $value, $expire = '+1 month', $path = '/', $domain = DOMAIN,
+        $secure = false, $httponly = false
+    ) {
         $name = sha1($name);
 
         if ($value === null) {
@@ -44,16 +54,18 @@ abstract class Library
             $httponly = true;
         }
 
-        return setcookie($name, base64_encode($value), strtotime($expire), $path, $domain, $secure, $httponly);
+        return setcookie(
+            $name, base64_encode($value), strtotime($expire), $path, $domain,
+            $secure, $httponly
+        );
     }
 
     /**
-     * sha1로 암호화 해서 생성된 쿠키 네임의 값을 찾음
+     * Sha1로 암호화 해서 생성된 쿠키 네임의 값을 찾음
+     * 
      * @param string $name 쿠키 네임
-     * @return string | null
-     * @see controller/User.php
-     * @see /app/core.php
-     * @see setCookie()
+     * 
+     * @return string|null
      */
     public static function getCookie($name)
     {
@@ -68,14 +80,17 @@ abstract class Library
 
     /**
      * 날짜와 날짜 사이에 있는 모든 날짜를 반환
-     * @param string $first strtotime 형식 시작일
-     * @param string $last strtotime 형식 종료일
-     * @param string $step strtotime 형식
-     * @param string $output_format 출력 형식
+     * 
+     * @param string $first  strtotime 형식 시작일
+     * @param string $last   strtotime 형식 종료일
+     * @param string $step   strtotime 형식
+     * @param string $format 출력 형식
+     * 
      * @return string $dates
      */
-    public static function dateRange($first, $last, $step = '+1 day', $output_format = 'Y-m-d')
-    {
+    public static function dateRange(
+        $first, $last, $step = '+1 day', $format = 'Y-m-d'
+    ) {
         $dates = array();
         $current = strtotime($first);
         $destiny = strtotime($last);
@@ -84,7 +99,7 @@ abstract class Library
             $destiny = strtotime($first);
         }
         while ($current <= $destiny) {
-            $dates[] = date($output_format, $current);
+            $dates[] = date($format, $current);
             $current = strtotime($step, $current);
         }
         return $dates;
@@ -92,8 +107,10 @@ abstract class Library
 
     /**
      * 시간 입력받아 현재로 부터 어떤 시점이었는지 한글로 표현
-     * @param string $datetime
-     * @param bool $today
+     * 
+     * @param string $datetime 시간
+     * @param bool   $today    오늘 여부
+     * 
      * @return string
      */
     public static function dateStr($datetime, $today = false)
@@ -122,10 +139,13 @@ abstract class Library
     }
 
     /**
-     * 문자열을 원하는 길이만큼 표기하고 뒤는 흐리기 mb_strimwidth 함수 쉽게 래핑
-     * @param string $str
-     * @param int $len
-     * @param string $suffix
+     * 문자열을 원하는 길이만큼 표기하고 뒤는 줄이기
+     * mb_strimwidth 함수 쉽게 래핑
+     * 
+     * @param string $str    문자열
+     * @param int    $len    길이
+     * @param string $suffix 줄임문자
+     * 
      * @return string
      */
     public static function cutStr($str, $len, $suffix = '…')
@@ -135,14 +155,16 @@ abstract class Library
 
     /**
      * GET, POST로 받은 변수 자동으로 filter_var_array적용
-     * @param array $filters
+     * 
+     * @param array $filters 반환할 변수셋
+     * 
      * @return array $vars
      */
     public static function vars($filters)
     {
         $args = $vars = [];
 
-        foreach($filters as $key => $value) {
+        foreach ($filters as $key => $value) {
             $args[$key] = isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
         }
 
@@ -151,10 +173,11 @@ abstract class Library
     }
 
     /**
-     * With DateTime you can make the shortest date&time validator for all formats.
-     * @author glavic@gmail.com
-     * @param string $date
-     * @param string $format
+     * Datetime 문자열 유효성 체크
+     * 
+     * @param string $date   시간
+     * @param string $format 검사할 형태
+     * 
      * @return bool
      */
     public static function validDate($date, $format = 'Y-m-d H:i:s')
@@ -166,7 +189,9 @@ abstract class Library
 
     /**
      * 휴대전화 번호 유효성 체크
-     * @param string $hp
+     * 
+     * @param string $hp 휴대전화번호
+     * 
      * @return bool
      */
     public static function validHpNumber($hp)
@@ -176,21 +201,34 @@ abstract class Library
 
     /**
      * 휴대전화 번호에 하이픈 자동 부여
-     * @param string $hp
+     * 
+     * @param string $hp 휴대전화번호
+     * 
      * @return string
      */
     public static function getHpNumber($hp)
     {
-        return preg_replace('/([0-9]{3})([0-9]{3,4})([0-9]{4})$/', '\\1-\\2-\\3', preg_replace('/[^0-9]/', '', $hp));
+        return preg_replace(
+            '/([0-9]{3})([0-9]{3,4})([0-9]{4})$/', '\\1-\\2-\\3',
+            preg_replace('/[^0-9]/', '', $hp)
+        );
     }
 
+    /**
+     * 지정한 Key가 유니크한 배열 얻기
+     * 
+     * @param array  $array 배열
+     * @param string $key   유니크 체크할 key
+     * 
+     * @return array
+     */
     public static function uniqueMultidimArray($array, $key)
     {
         $temp_array = [];
         $i = 0;
         $key_array = [];
 
-        foreach($array as $val) {
+        foreach ($array as $val) {
             if (!in_array($val[$key], $key_array)) {
                 $key_array[$i] = $val[$key];
                 $temp_array[$i] = $val;
@@ -201,6 +239,13 @@ abstract class Library
         return $temp_array;
     }
 
+    /**
+     * CSRF 체크를 위한 세션 생성 및 검사
+     * 
+     * @param string $state 체크썸
+     * 
+     * @return bool|string
+     */
     public static function checkState($state = null)
     {
         if ($state === null) {

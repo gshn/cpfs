@@ -13,11 +13,22 @@
 namespace helper;
 
 /**
- * CKEditor 업로더
- * @todo UploadFile 클래스 연동
+ * CKEditorUploader Class
+ * 
+ * @category Class
+ * @package  CPFS
+ * @author   gshn <gs@gs.hn>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://github.com/gshn/cpfs
+ * @todo     UploadFile 클래스 연동
  */
 class CKEditorUploader
 {
+    /**
+     * Function __construct
+     * 
+     * @return null
+     */
     public function __construct()
     {
         if (isset($_FILES['upload']) && $_FILES['upload']['error'] === 0) {
@@ -25,8 +36,17 @@ class CKEditorUploader
         } else {
             swal('실패!', '업로드에 실패 했습니다.', 'danger');
         }
+
+        return null;
     }
 
+    /**
+     * Function _uploaded
+     * 
+     * @param array $file 파일
+     * 
+     * @return null
+     */
     private static function _uploaded($file)
     {
         $upload_url = UPLOAD.'/ckeditor';
@@ -44,15 +64,18 @@ class CKEditorUploader
         @move_uploaded_file($tmp_name, $basepath);
 
         if (isset($_REQUEST['CKEditorFuncNum'])) {
-            echo "<script> window.parent.CKEDITOR.tools.callFunction({$CKEditorFuncNum}, '{$baseurl}');</script>;";
+            echo "<script>window.parent.CKEDITOR.tools.callFunction(
+                {$CKEditorFuncNum}, '{$baseurl}'
+            );</script>";
         } else {
-            Route::api(TRUE, [
+            $api = [
                 'uploaded' => 1,
                 'fileName' => $name,
                 'url' => $baseurl
-            ]);
+            ];
+            Route::api(true, $api);
         }
 
-        exit;
+        return null;
     }
 }
