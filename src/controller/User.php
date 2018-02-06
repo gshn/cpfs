@@ -128,8 +128,7 @@ class User extends UserModel
         if (empty($user['id'])
             || ($user['password'] !== self::_password($password))
         ) {
-            $swal = '가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n
-            비밀번호는 대소문자를 구분합니다.';
+            $swal = '가입된 회원아이디가 아니거나 비밀번호가 틀립니다.';
             swal('실패!', $swal, 'warning');
         }
 
