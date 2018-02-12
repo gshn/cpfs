@@ -284,6 +284,8 @@ class User extends UserModel
 
         if (!empty($password)) {
             $vars['password'] = self::_password($password);
+        } else {
+            unset($vars['password']);
         }
 
         if (!empty($id)) {
